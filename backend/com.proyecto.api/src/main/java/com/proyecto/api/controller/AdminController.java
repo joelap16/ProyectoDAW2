@@ -39,28 +39,28 @@ public class AdminController {
 	// GESTIONAR USUARIOS
 	// GET - LISTAR TODOS LOS USUARIOS
 	
-	@GetMapping("/listarUsuarios")
+	@GetMapping("/usuario")
 	public List<Usuario> listarUsuarios(){
 		return usuarioService.listarUsuarios();	
 	}
 	
 	// GET - LISTAR TODOS LOS TECNICOS
 	
-		@GetMapping("/listarTecnicos")
+		@GetMapping("/tecnico")
 		public List<Tecnico> listarTecnicos(){
 			return tecnicoService.listarTecnicos();	
 		}
 		
 	// POST - CREAR USUARIO
 	
-	@PostMapping("/crearUsuario")
+	@PostMapping("/usuario")
 	public Usuario crearUsuario(@RequestBody Usuario usuario) {
 		return usuarioService.crearUsuario(usuario);
 	}
 	
 	// PUT - EDITAR USUARIO POR SU ID
 	
-	@PutMapping("/editarUsuario/{id}")
+	@PutMapping("/usuario/{id}")
 	public ResponseEntity<String> editarUsuario(@RequestBody Usuario usuario, @PathVariable Integer id) {
 	    String mensaje = usuarioService.editarUsuario(usuario, id);
 	    return ResponseEntity.ok(mensaje);
@@ -68,7 +68,7 @@ public class AdminController {
 	
 	// DELETE - ELIMINAR USUARIO POR SU ID
 	
-	@DeleteMapping("/eliminarUsuario/{id}")
+	@DeleteMapping("/usuario/{id}")
 	public void eliminarUsuario(@PathVariable int id) {
 		usuarioService.eliminarUsuario(id);
 	}
@@ -88,7 +88,7 @@ public class AdminController {
     // GESTIONAR TICKETS
     // GET -- LISTAR TODOS LOS TICKETS
 	
- 	@GetMapping("/listarTickets")
+ 	@GetMapping("/ticket")
  	public List<Ticket> listarTickets(){
  		return ticketService.listarTickets();
  	}
@@ -118,7 +118,7 @@ public class AdminController {
  	
  	// DELETE - ELIMINAR UN TICKET POR SU ID
 	
- 	@DeleteMapping("/eliminarTicket/{id}")
+ 	@DeleteMapping("/ticket/{id}")
  	public ResponseEntity<String> eliminarTicket(@PathVariable("id") int idTicket) {
  	    ticketService.eliminarTicketPorId(idTicket);
  	    return ResponseEntity.ok("Ticket eliminado correctamente");

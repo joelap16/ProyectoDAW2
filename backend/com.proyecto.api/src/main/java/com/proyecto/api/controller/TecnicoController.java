@@ -25,7 +25,7 @@ public class TecnicoController {
 
 	// GET -- LISTAR TICKETS POR CATEGORIA
 
-	@GetMapping("/listarPorCategoria/{nombreCategoria}")
+	@GetMapping("/ticketsPorCategoria/{nombreCategoria}")
 	public ResponseEntity<List<Ticket>> listarTicketsPorCategoria(@PathVariable String nombreCategoria) {
 		try {
 			CategoriasEnum categoriaEnum = CategoriasEnum.valueOf(nombreCategoria.toUpperCase());
@@ -38,7 +38,7 @@ public class TecnicoController {
 
 	// GET - LISTAR TICKETS POR ESTADO
 
-	@GetMapping("/listarPorEstado/{estado}")
+	@GetMapping("/ticketsPorEstado/{estado}")
 	public ResponseEntity<List<Ticket>> listarTicketsPorEstado(@PathVariable String estado) {
 		try {
 			EstadosTicket estadoEnum = EstadosTicket.valueOf(estado.toUpperCase());
@@ -51,7 +51,7 @@ public class TecnicoController {
 
 	// GET - OBTENER TICKET POR ID
 
-	@GetMapping("/obtenerTicketPorId/{idTicket}")
+	@GetMapping("/ticketPorId/{idTicket}")
 	public ResponseEntity<Ticket> obtenerTicketPorId(@PathVariable int idTicket) {
 		return ticketService.obtenerTicketPorId(idTicket).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 	}
