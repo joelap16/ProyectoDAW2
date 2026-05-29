@@ -9,6 +9,7 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.proyecto.api.dto.TicketResponseDTO;
 import com.proyecto.api.enums.CategoriasEnum;
 import com.proyecto.api.enums.EstadosTicket;
 import com.proyecto.api.model.Categoria;
@@ -35,8 +36,18 @@ public class TicketService {
 	
 	// LISTAR
 	
+	// LISTAR TICKETS OLD
+	/* 
 	public List<Ticket> listarTickets(){
 		return reposTicket.findAll();
+	}
+	*/
+	
+	public List<TicketResponseDTO> listarTickets() {
+	    return reposTicket.findAll()
+	            .stream()
+	            .map(this::convertirADTO)
+	            .toList();
 	}
 	
 	public List<Ticket> listarTicketsPorCategoria(CategoriasEnum nombreCategoria){
@@ -164,6 +175,44 @@ public class TicketService {
 	    ticket.setComentarios(comentario);
 
 	    return reposTicket.save(ticket);
+	}
+	
+	//
+	// DTO
+	
+	private TicketResponseDTO convertirADTO(Ticket ticket) {
+		
+		TicketResponseDTO dto = new TicketResponseDTO();
+		
+		dto.setId(ticket.getIdTicket());
+	    dto.setTitulo(ticket.getTitulo());
+	    dto.setDescripcion(ticket.getDescripcion());
+	    
+	    dto.setFechaCreacion(ticket.getFechaCreacion());
+	    
+	    if (ticket.getEstado() != null) {
+	        dto.setEstado(ticket.getEstado().getNombreEstado().name());
+	    }
+
+	    if (ticket.getCategoria() != null) {
+	        dto.setCategoria(ticket.getCategoria().getNombreCategoria().name());
+	    }
+
+	    if (ticket.getUsuario() != null) {
+	        dto.setUsuario(
+	            ticket.getUsuario().getNomUsuario() + " " +
+	            ticket.getUsuario().getApeUsuario()
+	        );
+	    }
+
+	    if (ticket.getTecnico() != null) {
+	        dto.setTecnico(
+	            ticket.getTecnico().getNombreTecnico() + " " +
+	            ticket.getTecnico().getApellidoTecnico()
+	        );
+	    }
+
+	    return dto;
 	}
 	
 }

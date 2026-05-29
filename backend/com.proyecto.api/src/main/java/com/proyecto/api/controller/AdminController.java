@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.proyecto.api.dto.TicketResponseDTO;
 import com.proyecto.api.enums.EstadosTicket;
 import com.proyecto.api.model.Tecnico;
 import com.proyecto.api.model.Ticket;
@@ -89,7 +90,7 @@ public class AdminController {
     // GET -- LISTAR TODOS LOS TICKETS
 	
  	@GetMapping("/ticket")
- 	public List<Ticket> listarTickets(){
+ 	public List<TicketResponseDTO> listarTickets(){
  		return ticketService.listarTickets();
  	}
     
