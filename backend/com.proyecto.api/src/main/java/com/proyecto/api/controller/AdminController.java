@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.proyecto.api.dto.TicketResponseDTO;
+import com.proyecto.api.dto.ticket.TicketResponseDTO;
 import com.proyecto.api.enums.EstadosTicket;
 import com.proyecto.api.model.Tecnico;
 import com.proyecto.api.model.Ticket;

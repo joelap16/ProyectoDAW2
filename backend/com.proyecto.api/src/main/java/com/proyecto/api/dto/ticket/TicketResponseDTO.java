@@ -1,4 +1,4 @@
-package com.proyecto.api.dto;
+package com.proyecto.api.dto.ticket;
 
 import java.time.LocalDateTime;
 

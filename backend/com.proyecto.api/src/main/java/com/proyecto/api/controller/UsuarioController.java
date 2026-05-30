@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.proyecto.api.dto.TicketCreateDTO;
-import com.proyecto.api.dto.TicketResponseDTO;
+import com.proyecto.api.dto.ticket.TicketCreateDTO;
+import com.proyecto.api.dto.ticket.TicketResponseDTO;
 import com.proyecto.api.model.Ticket;
 import com.proyecto.api.service.TicketService;
 import com.proyecto.api.service.UsuarioService;

@@ -9,8 +9,8 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.proyecto.api.dto.TicketCreateDTO;
-import com.proyecto.api.dto.TicketResponseDTO;
+import com.proyecto.api.dto.ticket.TicketCreateDTO;
+import com.proyecto.api.dto.ticket.TicketResponseDTO;
 import com.proyecto.api.enums.CategoriasEnum;
 import com.proyecto.api.enums.EstadosTicket;
 import com.proyecto.api.model.Categoria;
