@@ -9,6 +9,7 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.proyecto.api.dto.TicketCreateDTO;
 import com.proyecto.api.dto.TicketResponseDTO;
 import com.proyecto.api.enums.CategoriasEnum;
 import com.proyecto.api.enums.EstadosTicket;
@@ -16,9 +17,12 @@ import com.proyecto.api.model.Categoria;
 import com.proyecto.api.model.EstadoTicket;
 import com.proyecto.api.model.Tecnico;
 import com.proyecto.api.model.Ticket;
+import com.proyecto.api.model.Usuario;
+import com.proyecto.api.repository.CategoriaRepository;
 import com.proyecto.api.repository.EstadoTicketRepository;
 import com.proyecto.api.repository.TecnicoRepository;
 import com.proyecto.api.repository.TicketRepository;
+import com.proyecto.api.repository.UsuarioRepositorio;
 
 @Service
 public class TicketService {
@@ -33,6 +37,12 @@ public class TicketService {
 	
 	@Autowired
 	EstadoTicketRepository reposEstadoTicket;
+	
+	@Autowired
+	CategoriaRepository reposCategoria;
+	
+	@Autowired
+	UsuarioRepositorio reposUsuario;
 	
 	// LISTAR
 	
@@ -69,6 +79,8 @@ public class TicketService {
 		return reposTicket.save(ticket);
 	}
 	
+	// CREAR TICKET OLD
+	/*
 	public Ticket crearTicketConTecnico(Ticket ticket) {
 	    Categoria categoria = ticket.getCategoria();
 
@@ -88,6 +100,45 @@ public class TicketService {
 	    return reposTicket.save(ticket);
 	}
 	
+	*/
+	
+	// NEW CREAR
+	
+	public TicketResponseDTO crearTicket(TicketCreateDTO dto) {
+	    Usuario usuario = reposUsuario.findById(dto.getUsuarioId())
+	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    Categoria categoria = reposCategoria.findById(dto.getCategoriaId())
+	            .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+
+	    EstadoTicket estadoInicial = reposEstadoTicket.findByNombreEstado(EstadosTicket.ABIERTO)
+	            .orElseThrow(() -> new RuntimeException("Estado ABIERTO no existe"));
+
+	    Ticket ticket = new Ticket();
+	    ticket.setTitulo(dto.getTitulo());
+	    ticket.setDescripcion(dto.getDescripcion());
+	    ticket.setUsuario(usuario);
+	    ticket.setCategoria(categoria);
+	    ticket.setFechaCreacion(LocalDateTime.now());
+	    ticket.setEstado(estadoInicial);
+
+	    // ASIGNAR TECNICO SEGUN CATEGORIA
+	    List<Tecnico> tecnicos = reposTecnico.findByCategoria(categoria);
+
+	    if (tecnicos.isEmpty()) {
+	        throw new RuntimeException("No hay técnicos disponibles para esta categoría");
+	    }
+
+	    Tecnico tecnicoAsignado = tecnicos.get(0); // luego puedes mejorar esto (RANDOM)
+	    // HOLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA POSIBLE MEJORAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+	    ticket.setTecnico(tecnicoAsignado);
+
+	    Ticket ticketGuardado = reposTicket.save(ticket);
+
+	    return convertirADTO(ticketGuardado);
+	}
+	
+
 	//
 	// ELIMINAR
 	
@@ -178,7 +229,7 @@ public class TicketService {
 	}
 	
 	//
-	// DTO
+	// DTO - CONVERTIR TICKET A DTO
 	
 	private TicketResponseDTO convertirADTO(Ticket ticket) {
 		

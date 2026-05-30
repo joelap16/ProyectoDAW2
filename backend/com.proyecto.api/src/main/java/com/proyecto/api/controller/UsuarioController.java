@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.proyecto.api.dto.TicketCreateDTO;
+import com.proyecto.api.dto.TicketResponseDTO;
 import com.proyecto.api.model.Ticket;
 import com.proyecto.api.service.TicketService;
 import com.proyecto.api.service.UsuarioService;
@@ -26,12 +28,23 @@ public class UsuarioController {
 	
 	// POST - CREAR TICKET Y ASIGNAR TECNICO AUTOMATICAMENTE SEGUN CATEGORIA DE TICKET
 	
+	// OLD CREAR TICKET
+	/*
+
 	@PostMapping("/crearTicket")
 	public ResponseEntity<Ticket> crearTicket(@RequestBody Ticket ticket) {
 		Ticket nuevoTicket = ticketService.crearTicketConTecnico(ticket);
 		return new ResponseEntity<>(nuevoTicket, HttpStatus.CREATED);
 	}
+	
+	*/
 
+	@PostMapping("/crearTicket")
+	public ResponseEntity<TicketResponseDTO> crearTicket(@RequestBody TicketCreateDTO dto) {
+	    TicketResponseDTO ticketCreado = ticketService.crearTicket(dto);
+	    return ResponseEntity.status(HttpStatus.CREATED).body(ticketCreado);
+	}
+	
 	// GET - OBTENER TICKET POR ID
 
 	@GetMapping("/{idTicket}")
