@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.proyecto.api.dto.ticket.TicketResponseDTO;
+import com.proyecto.api.dto.usuario.UsuarioCreateDTO;
+import com.proyecto.api.dto.usuario.UsuarioResponseDTO;
 import com.proyecto.api.enums.EstadosTicket;
 import com.proyecto.api.model.Tecnico;
 import com.proyecto.api.model.Ticket;
@@ -41,37 +43,39 @@ public class AdminController {
 	// GET - LISTAR TODOS LOS USUARIOS
 	
 	@GetMapping("/usuario")
-	public List<Usuario> listarUsuarios(){
+	public List<UsuarioResponseDTO> listarUsuarios(){
 		return usuarioService.listarUsuarios();	
 	}
 	
 	// GET - LISTAR TODOS LOS TECNICOS
 	
-		@GetMapping("/tecnico")
-		public List<Tecnico> listarTecnicos(){
-			return tecnicoService.listarTecnicos();	
-		}
+	@GetMapping("/tecnico")
+	public List<Tecnico> listarTecnicos(){
+		return tecnicoService.listarTecnicos();	
+	}
 		
 	// POST - CREAR USUARIO
 	
-	@PostMapping("/usuario")
-	public Usuario crearUsuario(@RequestBody Usuario usuario) {
-		return usuarioService.crearUsuario(usuario);
+	@PostMapping("/crearUsuario")
+	public ResponseEntity<UsuarioResponseDTO> crearUsuario(@RequestBody UsuarioCreateDTO dto) {
+	    UsuarioResponseDTO usuarioCreado = usuarioService.crearUsuario(dto);
+	    return ResponseEntity.status(HttpStatus.CREATED).body(usuarioCreado);
 	}
 	
 	// PUT - EDITAR USUARIO POR SU ID
 	
-	@PutMapping("/usuario/{id}")
-	public ResponseEntity<String> editarUsuario(@RequestBody Usuario usuario, @PathVariable Integer id) {
-	    String mensaje = usuarioService.editarUsuario(usuario, id);
-	    return ResponseEntity.ok(mensaje);
+	@PutMapping("/editarUsuario/{id}")
+	public ResponseEntity<UsuarioResponseDTO> editarUsuario(@RequestBody UsuarioCreateDTO dto, @PathVariable Integer id) {
+	    UsuarioResponseDTO usuarioActualizado = usuarioService.editarUsuario(dto, id);
+	    return ResponseEntity.ok(usuarioActualizado);
 	}
 	
 	// DELETE - ELIMINAR USUARIO POR SU ID
 	
-	@DeleteMapping("/usuario/{id}")
-	public void eliminarUsuario(@PathVariable int id) {
-		usuarioService.eliminarUsuario(id);
+	@DeleteMapping("/eliminarUsuario/{id}")
+	public ResponseEntity<String> eliminarUsuario(@PathVariable Integer id) {
+	    usuarioService.eliminarUsuario(id);
+	    return ResponseEntity.ok("Usuario eliminado correctamente");
 	}
 	
 	// ASIGNAR CATEGORIA DE TECNICOS	
