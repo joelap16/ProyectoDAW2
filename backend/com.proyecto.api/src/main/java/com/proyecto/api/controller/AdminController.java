@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.proyecto.api.dto.tecnico.TecnicoResponseDTO;
 import com.proyecto.api.dto.ticket.TicketResponseDTO;
 import com.proyecto.api.dto.usuario.UsuarioCreateDTO;
 import com.proyecto.api.dto.usuario.UsuarioResponseDTO;
@@ -47,11 +48,22 @@ public class AdminController {
 		return usuarioService.listarUsuarios();	
 	}
 	
-	// GET - LISTAR TODOS LOS TECNICOS
+	// GET - LISTAR TECNICOS
 	
+	// OLD LISTAR
+	
+	/*
 	@GetMapping("/tecnico")
 	public List<Tecnico> listarTecnicos(){
 		return tecnicoService.listarTecnicos();	
+	}
+	*/
+	
+	// LISTAR
+	
+	@GetMapping("/listarTecnicos")
+	public List<TecnicoResponseDTO> listarTecnicos(){
+	    return tecnicoService.listarTecnicos();
 	}
 		
 	// POST - CREAR USUARIO
