@@ -198,7 +198,7 @@ public class TicketService {
 	}
 	
 	//
-	// ATENDER TICKET
+	// ************ ATENDER TICKET *************
 	
 	public Ticket atenderTicket(int idTicket, EstadosTicket nuevoEstado, String comentario) {
 	    Optional<Ticket> optionalTicket = reposTicket.findById(idTicket);

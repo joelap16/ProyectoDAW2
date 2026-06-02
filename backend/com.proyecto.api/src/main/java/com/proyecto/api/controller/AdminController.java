@@ -27,6 +27,8 @@ import com.proyecto.api.service.TecnicoService;
 import com.proyecto.api.service.TicketService;
 import com.proyecto.api.service.UsuarioService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
@@ -69,9 +71,11 @@ public class AdminController {
 	// POST - CREAR USUARIO
 	
 	@PostMapping("/crearUsuario")
-	public ResponseEntity<UsuarioResponseDTO> crearUsuario(@RequestBody UsuarioCreateDTO dto) {
-	    UsuarioResponseDTO usuarioCreado = usuarioService.crearUsuario(dto);
-	    return ResponseEntity.status(HttpStatus.CREATED).body(usuarioCreado);
+	public ResponseEntity<UsuarioResponseDTO> crearUsuario(
+	        @Valid @RequestBody UsuarioCreateDTO dto) {
+
+	    return ResponseEntity.status(HttpStatus.CREATED)
+	            .body(usuarioService.crearUsuario(dto));
 	}
 	
 	// PUT - EDITAR USUARIO POR SU ID

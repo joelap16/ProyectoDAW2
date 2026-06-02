@@ -16,6 +16,8 @@ import com.proyecto.api.model.Ticket;
 import com.proyecto.api.service.TicketService;
 import com.proyecto.api.service.UsuarioService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/usuario")
 public class UsuarioController {
@@ -40,7 +42,9 @@ public class UsuarioController {
 	*/
 
 	@PostMapping("/crearTicket")
-	public ResponseEntity<TicketResponseDTO> crearTicket(@RequestBody TicketCreateDTO dto) {
+	public ResponseEntity<TicketResponseDTO> crearTicket(
+			@Valid @RequestBody TicketCreateDTO dto) {
+		
 	    TicketResponseDTO ticketCreado = ticketService.crearTicket(dto);
 	    return ResponseEntity.status(HttpStatus.CREATED).body(ticketCreado);
 	}

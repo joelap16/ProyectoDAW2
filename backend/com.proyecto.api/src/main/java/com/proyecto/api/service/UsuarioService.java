@@ -79,8 +79,15 @@ public class UsuarioService {
 	// NEW CREAR
 	
 	public UsuarioResponseDTO crearUsuario(UsuarioCreateDTO dto) {
+		
+		// VALIDAR ROL
 	    RolUsuario rol = reposRolUsuario.findById(dto.getRolId())
 	            .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+	    
+	    // VALIDAR CORREO
+	    if(repos.existsByEmaUsuario(dto.getEmail())) {
+	        throw new RuntimeException("Ya existe un usuario con ese correo");
+	    }
 
 	    Usuario usuario = new Usuario();
 	    usuario.setNomUsuario(dto.getNombre());
@@ -150,5 +157,7 @@ public class UsuarioService {
 
 	    return dto;
 	}
+	
+	
 	
 }

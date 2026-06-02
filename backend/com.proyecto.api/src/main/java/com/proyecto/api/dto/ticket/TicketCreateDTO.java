@@ -1,10 +1,23 @@
 package com.proyecto.api.dto.ticket;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class TicketCreateDTO {
 
+	@NotBlank(message = "El título es obligatorio")
+    @Size(max = 100, message = "El título no puede superar los 100 caracteres")
     private String titulo;
+
+    @NotBlank(message = "La descripción es obligatoria")
+    @Size(max = 500, message = "La descripción no puede superar los 500 caracteres")
     private String descripcion;
+
+    @NotNull(message = "Debe seleccionar una categoría")
     private Integer categoriaId;
+
+    @NotNull(message = "Debe indicar un usuario")
     private Integer usuarioId;
 
     public TicketCreateDTO() {}

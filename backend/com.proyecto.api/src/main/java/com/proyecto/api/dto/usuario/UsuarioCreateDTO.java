@@ -1,10 +1,27 @@
 package com.proyecto.api.dto.usuario;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class UsuarioCreateDTO {
 
+	@NotBlank(message = "El nombre es obligatorio")
+	@Size(max = 50)
     private String nombre;
+
+    @NotBlank(message = "El apellido es obligatorio")
+    @Size(max = 50)
     private String apellido;
+    
+    // (regexp = "^[.a-zA-Z0-9_-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$",  FORMATO CORREO
+    
+    @Email(message = "Formato de correo inválido")
+    @NotBlank(message = "El correo es obligatorio")
     private String email;
+
+    @NotNull(message = "El rol es obligatorio")
     private Integer rolId;
     
 	public UsuarioCreateDTO() {
