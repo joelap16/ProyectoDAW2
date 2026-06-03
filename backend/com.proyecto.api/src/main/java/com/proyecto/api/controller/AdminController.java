@@ -45,32 +45,22 @@ public class AdminController {
 	// GESTIONAR USUARIOS
 	// GET - LISTAR TODOS LOS USUARIOS
 	
-	@GetMapping("/usuario")
+	@GetMapping("/usuarios")
 	public List<UsuarioResponseDTO> listarUsuarios(){
 		return usuarioService.listarUsuarios();	
 	}
 	
 	// GET - LISTAR TECNICOS
 	
-	// OLD LISTAR
 	
-	/*
-	@GetMapping("/tecnico")
-	public List<Tecnico> listarTecnicos(){
-		return tecnicoService.listarTecnicos();	
-	}
-	*/
-	
-	// LISTAR
-	
-	@GetMapping("/listarTecnicos")
+	@GetMapping("/tecnicos")
 	public List<TecnicoResponseDTO> listarTecnicos(){
 	    return tecnicoService.listarTecnicos();
 	}
 		
 	// POST - CREAR USUARIO
 	
-	@PostMapping("/crearUsuario")
+	@PostMapping("/usuarios")
 	public ResponseEntity<UsuarioResponseDTO> crearUsuario(
 	        @Valid @RequestBody UsuarioCreateDTO dto) {
 
@@ -80,7 +70,7 @@ public class AdminController {
 	
 	// PUT - EDITAR USUARIO POR SU ID
 	
-	@PutMapping("/editarUsuario/{id}")
+	@PutMapping("/usuarios/{id}")
 	public ResponseEntity<UsuarioResponseDTO> editarUsuario(@RequestBody UsuarioCreateDTO dto, @PathVariable Integer id) {
 	    UsuarioResponseDTO usuarioActualizado = usuarioService.editarUsuario(dto, id);
 	    return ResponseEntity.ok(usuarioActualizado);
@@ -88,7 +78,7 @@ public class AdminController {
 	
 	// DELETE - ELIMINAR USUARIO POR SU ID
 	
-	@DeleteMapping("/eliminarUsuario/{id}")
+	@DeleteMapping("/usuarios/{id}")
 	public ResponseEntity<String> eliminarUsuario(@PathVariable Integer id) {
 	    usuarioService.eliminarUsuario(id);
 	    return ResponseEntity.ok("Usuario eliminado correctamente");
@@ -97,49 +87,51 @@ public class AdminController {
 	// ASIGNAR CATEGORIA DE TECNICOS	
 	// EL IDCATEGORIA SE ENVIA SOLO COMO PARAMETRO
 	
-    @PutMapping("/{id}/asignarCategoriaATecnico")
-    public ResponseEntity<?> asignarCategoria(
-        @PathVariable int id,
-        @RequestParam int categoriaId) {
+	@PutMapping("/tecnicos/{id}/categoria")
+	public ResponseEntity<String> asignarCategoria(
+	        @PathVariable Integer id,
+	        @RequestParam Integer categoriaId) {
 
-        tecnicoService.asignarCategoriaATecnico(id, categoriaId);
-        return ResponseEntity.ok("Categoría asignada con éxito");
-    }
+	    tecnicoService.asignarCategoriaATecnico(id, categoriaId);
+
+	    return ResponseEntity.ok("Categoría asignada con éxito");
+	}
     
     // GESTIONAR TICKETS
     // GET -- LISTAR TODOS LOS TICKETS
 	
- 	@GetMapping("/ticket")
+ 	@GetMapping("/tickets")
  	public List<TicketResponseDTO> listarTickets(){
  		return ticketService.listarTickets();
  	}
     
  	// PUT - ASIGNAR TECNICO A UN TICKET MANUALMENTE
 	
- 	@PutMapping("/{idTicket}/asignar-tecnico/{idTecnico}")
- 	public ResponseEntity<Ticket> asignarATecnico(@PathVariable int idTicket, @PathVariable int idTecnico) {
- 	    Ticket ticket = ticketService.asignarATecnico(idTicket, idTecnico);
- 	    return (ticket != null) ? ResponseEntity.ok(ticket) : ResponseEntity.notFound().build();
+ 	@PutMapping("/tickets/{idTicket}/tecnico/{idTecnico}")
+ 	public ResponseEntity<TicketResponseDTO> asignarATecnico(
+ 	        @PathVariable Integer idTicket,
+ 	        @PathVariable Integer idTecnico) {
+
+ 	    return ResponseEntity.ok(
+ 	            ticketService.asignarATecnico(idTicket, idTecnico));
  	}
  	
  	// PUT - ASIGNAR ESTADO DE TICKET
  	
- 	@PutMapping("/{idTicket}/actualizarEstado")
- 	public ResponseEntity<Ticket> actualizarEstadoTicket(
- 	        @PathVariable int idTicket,
+ 	@PutMapping("/tickets/{idTicket}/estado")
+ 	public ResponseEntity<TicketResponseDTO> actualizarEstadoTicket(
+ 	        @PathVariable Integer idTicket,
  	        @RequestParam EstadosTicket nuevoEstado) {
- 	    try {
- 	        Ticket ticket = ticketService.actualizarEstadoTicket(idTicket, nuevoEstado);
- 	        return ResponseEntity.ok(ticket);
- 	    } catch (RuntimeException e) {
- 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
- 	    }
- 	}
 
+ 	    return ResponseEntity.ok(
+ 	            ticketService.actualizarEstadoTicket(
+ 	                    idTicket,
+ 	                    nuevoEstado));
+ 	}
  	
  	// DELETE - ELIMINAR UN TICKET POR SU ID
 	
- 	@DeleteMapping("/ticket/{id}")
+ 	@DeleteMapping("/tickets/{id}")
  	public ResponseEntity<String> eliminarTicket(@PathVariable("id") int idTicket) {
  	    ticketService.eliminarTicketPorId(idTicket);
  	    return ResponseEntity.ok("Ticket eliminado correctamente");

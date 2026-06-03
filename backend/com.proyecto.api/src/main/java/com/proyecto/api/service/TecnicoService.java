@@ -19,16 +19,7 @@ public class TecnicoService {
 	
 	@Autowired
 	CategoriaRepository reposCategorias;
-	
-	//
-	// OLD LISTAR TECNICOS
-	
-	/*
-	public List<Tecnico> listarTecnicos(){
-		return reposTecnico.findAll();
-	}
-	*/
-	
+		
 	// LISTAR
 	//
 	

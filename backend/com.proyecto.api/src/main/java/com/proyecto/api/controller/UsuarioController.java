@@ -29,19 +29,10 @@ public class UsuarioController {
 	TicketService ticketService;
 	
 	// POST - CREAR TICKET Y ASIGNAR TECNICO AUTOMATICAMENTE SEGUN CATEGORIA DE TICKET
-	
-	// OLD CREAR TICKET
-	/*
+		
+	// CREAR TICKET
 
-	@PostMapping("/crearTicket")
-	public ResponseEntity<Ticket> crearTicket(@RequestBody Ticket ticket) {
-		Ticket nuevoTicket = ticketService.crearTicketConTecnico(ticket);
-		return new ResponseEntity<>(nuevoTicket, HttpStatus.CREATED);
-	}
-	
-	*/
-
-	@PostMapping("/crearTicket")
+	@PostMapping("/tickets")
 	public ResponseEntity<TicketResponseDTO> crearTicket(
 			@Valid @RequestBody TicketCreateDTO dto) {
 		
@@ -51,9 +42,11 @@ public class UsuarioController {
 	
 	// GET - OBTENER TICKET POR ID
 
-	@GetMapping("/{idTicket}")
-	public ResponseEntity<Ticket> obtenerTicketPorId(@PathVariable int idTicket) {
-		return ticketService.obtenerTicketPorId(idTicket).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+	@GetMapping("/tickets/{idTicket}")
+	public ResponseEntity<TicketResponseDTO> obtenerTicketPorId(
+	        @PathVariable Integer idTicket) {
+
+	    return ResponseEntity.ok(ticketService.obtenerTicketPorId(idTicket));
 	}
 
 }

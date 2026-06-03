@@ -20,4 +20,8 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
 	List<Ticket> findByTecnicoId(int id);
 	// CUENTA LA CANTIDAD DE TICKETS ASIGNADOS A UN TECNICO (POR SU ID)
 	int countByTecnico_Id(int idTecnico);
+	// BUSCA SI HAY USUARIOS CON TICKETS
+	boolean existsByUsuario_IdUsuario(Integer idUsuario);
+	// BUSCA SI HAY TECNICO CON TICKETS
+	boolean existsByTecnico_Id(Integer idTecnico);
 }

@@ -13,6 +13,7 @@ import com.proyecto.api.model.Tecnico;
 import com.proyecto.api.model.Usuario;
 import com.proyecto.api.repository.RolUsuarioRepository;
 import com.proyecto.api.repository.TecnicoRepository;
+import com.proyecto.api.repository.TicketRepository;
 import com.proyecto.api.repository.UsuarioRepositorio;
 
 @Service
@@ -27,21 +28,12 @@ public class UsuarioService {
 	@Autowired
 	RolUsuarioRepository reposRolUsuario;
 	
+	@Autowired
+	TicketRepository reposTicket;
+	
 	// LISTAR
 	//
-	
-	// OLD LISTAR
-	/*
-	 * 
-	public List<Usuario> listarUsuarios(){
-		return repos.findAll();
-	}
 		
-	*/
-	
-	
-	// NEW LISTAR
-	
 	public List<UsuarioResponseDTO> listarUsuarios() {
 	    return repos.findAll()
 	            .stream()
@@ -51,32 +43,6 @@ public class UsuarioService {
 	
 	// CREAR
 	//
-	
-	// OLD CREAR
-	/*
-	public Usuario crearUsuario(Usuario usuario) {
-		// Obtener rol de usuario
-        RolUsuario rolUsuario = usuario.getRol();
-        
-        // Verificar si el rol es TECNICO
-        if (rolUsuario != null && rolUsuario.getNombreRol() == Role.TECNICO) {
-            // Si es Técnico, crear un técnico en la BD
-            Tecnico tecnico = new Tecnico();
-            tecnico.setUsuario(usuario);
-            tecnico.setNombreTecnico(usuario.getNomUsuario());
-            tecnico.setApellidoTecnico(usuario.getApeUsuario());
-            tecnico.setEmailTecnico(usuario.getEmaUsuario());
-            reposTecnico.save(tecnico); // Guarda el tecnico en tbl_tecnico
-        } else {
-            // Sino, guarda el usuario
-            usuario = repos.save(usuario);
-        }
-
-        return usuario;
-	}
-	*/
-	
-	// NEW CREAR
 	
 	public UsuarioResponseDTO crearUsuario(UsuarioCreateDTO dto) {
 		
@@ -118,6 +84,13 @@ public class UsuarioService {
 	    if (!repos.existsById(id)) {
 	        throw new RuntimeException("Usuario no encontrado con id: " + id);
 	    }
+	    
+	    if (reposTicket.existsByUsuario_IdUsuario(id)) {
+	        throw new RuntimeException(
+	                "El usuario tiene tickets registrados");
+	    }
+	    
+	    
 	    repos.deleteById(id);
 	}
 	
@@ -135,6 +108,14 @@ public class UsuarioService {
 	    usuario.setApeUsuario(dto.getApellido());
 	    usuario.setEmaUsuario(dto.getEmail());
 	    usuario.setRol(rol);
+	    
+	    if(repos.existsByEmaUsuarioAndIdUsuarioNot(
+	            dto.getEmail(),
+	            id)) {
+
+	        throw new RuntimeException(
+	            "Ya existe otro usuario con ese correo");
+	    }
 
 	    Usuario usuarioActualizado = repos.save(usuario);
 
