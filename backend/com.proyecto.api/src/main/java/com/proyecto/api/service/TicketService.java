@@ -77,15 +77,7 @@ public class TicketService {
 	            .toList();
 	}
 		
-	//
-	// CREAR TICKET
-	
-	public Ticket crearTicket(Ticket ticket) {
-		return reposTicket.save(ticket);
-	}
-	
-		
-	// NEW CREAR
+	// CREAR
 	
 	public TicketResponseDTO crearTicket(TicketCreateDTO dto) {
 	    Usuario usuario = reposUsuario.findById(dto.getUsuarioId())
@@ -137,7 +129,6 @@ public class TicketService {
 		}
 
 		reposTicket.delete(ticket);
-		reposTicket.deleteById(idTicket);
 	}
 	
 	// ASIGNAR A TECNICO

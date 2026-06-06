@@ -30,8 +30,9 @@ public class TecnicoController {
 	private TicketService ticketService;
 
 	// GET -- LISTAR TICKETS POR CATEGORIA
+	// EL TECNICO AUTENTICADO SOLO LISTARA SUS TICKETS (mis-tickets)
 
-	@GetMapping("/tickets/categoria/{categoria}")
+	@GetMapping("/tickets/mis-tickets/{categoria}")
 	public ResponseEntity<List<TicketResponseDTO>> listarTicketsPorCategoria(@PathVariable String categoria) {
 		CategoriasEnum categoriaEnum = CategoriasEnum.valueOf(categoria.toUpperCase());
 		List<TicketResponseDTO> tickets = ticketService.listarTicketsPorCategoria(categoriaEnum);
@@ -40,7 +41,7 @@ public class TecnicoController {
 
 	// GET - LISTAR TICKETS POR ESTADO
 
-	@GetMapping("/tickets/estado/{estado}")
+	@GetMapping("/tickets/mis-tickets/{estado}")
 	public ResponseEntity<List<TicketResponseDTO>> listarTicketsPorEstado(@PathVariable String estado) {
 		EstadosTicket estadoEnum = EstadosTicket.valueOf(estado.toUpperCase());
 		List<TicketResponseDTO> tickets = ticketService.listarTicketsPorEstado(estadoEnum);

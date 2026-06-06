@@ -71,7 +71,9 @@ public class AdminController {
 	// PUT - EDITAR USUARIO POR SU ID
 	
 	@PutMapping("/usuarios/{id}")
-	public ResponseEntity<UsuarioResponseDTO> editarUsuario(@RequestBody UsuarioCreateDTO dto, @PathVariable Integer id) {
+	public ResponseEntity<UsuarioResponseDTO> editarUsuario(
+			@Valid
+			@RequestBody UsuarioCreateDTO dto, @PathVariable Integer id) {
 	    UsuarioResponseDTO usuarioActualizado = usuarioService.editarUsuario(dto, id);
 	    return ResponseEntity.ok(usuarioActualizado);
 	}
