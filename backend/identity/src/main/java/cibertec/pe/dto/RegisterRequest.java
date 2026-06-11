@@ -8,6 +8,9 @@ public class RegisterRequest {
 
     @NotBlank(message = "El nombre es obligatorio.")
     private String name;
+    
+    @NotBlank(message = "El apellido es obligatorio.")
+    private String apellido;
 
     @Email(message = "Debe ingresar un correo electrónico válido.")
     @NotBlank(message = "El correo es obligatorio.")
