@@ -2,8 +2,11 @@ package com.proyecto.api.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.proyecto.api.enums.CategoriasEnum;
 import com.proyecto.api.model.Categoria;
 
 public interface CategoriaRepository extends JpaRepository<Categoria, Integer> {
 
+	boolean existsByNombreCategoria(CategoriasEnum nombreCategoria);
+	
 }

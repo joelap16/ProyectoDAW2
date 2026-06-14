@@ -21,7 +21,7 @@ public class RolUsuario {
 	private int idRol;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "nombre_rol")
+	@Column(name = "nombre_rol", length = 50)
 	private Role nombreRol; // ADMIN, TECNICO, USUARIO
 
 	public RolUsuario() {

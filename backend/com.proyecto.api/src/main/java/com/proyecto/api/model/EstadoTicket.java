@@ -20,7 +20,7 @@ public class EstadoTicket {
 	@Column(name = "id_estado")
 	private int idEstado;
 	
-	@Column(name = "nombre_estado")
+	@Column(name = "nombre_estado", length = 50)
 	@Enumerated(EnumType.STRING)
 	private EstadosTicket nombreEstado;
 

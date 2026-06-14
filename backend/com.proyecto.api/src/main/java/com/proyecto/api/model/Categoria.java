@@ -20,7 +20,7 @@ public class Categoria {
 	@Column(name = "id_categoria")
 	private int idCategoria;
 	
-	@Column(name = "nombre_categoria")
+	@Column(name = "nombre_categoria", length = 50)	
 	@Enumerated(EnumType.STRING)
 	private CategoriasEnum nombreCategoria;
 	/*	

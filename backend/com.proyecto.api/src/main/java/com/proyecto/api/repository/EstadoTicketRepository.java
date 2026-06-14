@@ -10,4 +10,6 @@ import com.proyecto.api.model.EstadoTicket;
 public interface EstadoTicketRepository extends JpaRepository<EstadoTicket, Integer> {
 
 	Optional<EstadoTicket> findByNombreEstado(EstadosTicket nombreEstado);
+	boolean existsByNombreEstado(EstadosTicket nombreEstado);
+	
 }
