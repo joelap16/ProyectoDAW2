@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,7 @@ export class Login {
 
   loginForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private authService: AuthService){
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router){
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -27,7 +28,8 @@ export class Login {
     return;
   }
 
-  this.authService.login(this.loginForm.value)
+  this.authService.login(this.loginForm.value)      
+
     .subscribe({
 
       next: (token) => {
@@ -37,7 +39,7 @@ export class Login {
         // Guardar token y mostrarlo
         console.log('Token recibido: ', token)
 
-      // Probar métodos del AuthService
+        // Probar métodos del AuthService
         console.log('Payload:', this.authService.getDecodedToken());
 
         console.log('Rol:',
@@ -52,6 +54,28 @@ export class Login {
         console.log('Autenticado:',
           this.authService.isLoggedIn());
 
+          // Redireccion a los dashboards por rol
+        
+        const rol = this.authService.getRol();
+
+        if (rol === 'ADMINISTRADOR') {
+
+        this.router.navigate(['/admin/dashboard']);
+
+        }
+
+        else if (rol === 'TECNICO') {
+
+        this.router.navigate(['/tecnico/dashboard']);
+
+        }     
+
+        else if (rol === 'USUARIO') {
+
+        this.router.navigate(['/usuario/dashboard']);
+
+        }
+        
       },
 
       error: (err) => {
