@@ -1,0 +1,20 @@
+<h2>Panel Administrador</h2>
+
+<button (click)="cerrarSesion()">
+    Cerrar sesión
+</button>
+
+<hr>
+
+<nav>
+
+<a routerLink="/admin/dashboard">Dashboard</a> |
+<a routerLink="/admin/usuarios">Usuarios</a> |
+<a routerLink="/admin/tickets">Tickets</a> |
+<a routerLink="/admin/reportes">Reportes</a>
+
+</nav>
+
+<hr>
+
+<router-outlet></router-outlet>

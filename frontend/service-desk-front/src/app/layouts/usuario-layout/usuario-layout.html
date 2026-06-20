@@ -1,0 +1,21 @@
+<h2>Panel Usuario</h2>
+
+<button (click)="cerrarSesion()">
+    Cerrar sesión
+</button>
+
+<hr>
+
+<nav>
+
+<a routerLink="/usuario/dashboard">Dashboard</a> |
+
+<a routerLink="/usuario/mis-tickets">Mis Tickets</a> |
+
+<a routerLink="/usuario/nuevo-ticket">Nuevo Ticket</a>
+
+</nav>
+
+<hr>
+
+<router-outlet></router-outlet>
