@@ -6,12 +6,14 @@ import { LoginRequest } from '../../model/login-request';
 import { jwtDecode } from 'jwt-decode';
 import { JwtPayload } from '../../model/jwt-payload';
 
+import { environment } from '../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:8082/auth';
+  private apiUrl = environment.apiUrl + '/auth';
 
   constructor(private http: HttpClient) {}
 
