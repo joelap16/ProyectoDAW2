@@ -1,14 +1,19 @@
 import { Routes } from '@angular/router';
 import { Login } from './pages/auth/login/login';
 import { Register } from './pages/auth/register/register';
+
 import { DashboardAdmin } from './pages/admin/dashboard/dashboard';
 import { DashboardTecnico } from './pages/tecnico/dashboard/dashboard';
 import { DashboardUsuario } from './pages/usuario/dashboard/dashboard';
+
 import { authGuard } from './guards/auth-guard';
 import { roleGuard } from './guards/role-guard';
+
 import { AdminLayout } from './layouts/admin-layout/admin-layout';
 import { TecnicoLayout } from './layouts/tecnico-layout/tecnico-layout';
 import { UsuarioLayout } from './layouts/usuario-layout/usuario-layout';
+
+import { ListaTickets } from './pages/admin/lista-tickets/lista-tickets';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
@@ -26,6 +31,11 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardAdmin
+      },
+
+      {
+        path: 'tickets',
+        component: ListaTickets
       }
 
     ]

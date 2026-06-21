@@ -1,0 +1,36 @@
+<h2>Lista de Tickets</h2>
+
+<table border="1">
+
+    <tr>
+
+        <th>ID</th>
+        <th>Título</th>
+        <th>Categoría</th>
+        <th>Estado</th>
+        <th>Usuario</th>
+        <th>Técnico</th>
+
+    </tr>
+
+    @for (ticket of tickets; track ticket.id) {
+
+        <tr>
+
+            <td>{{ ticket.id }}</td>
+
+            <td>{{ ticket.titulo }}</td>
+
+            <td>{{ ticket.categoria }}</td>
+
+            <td>{{ ticket.estado }}</td>
+
+            <td>{{ ticket.usuario }}</td>
+
+            <td>{{ ticket.tecnico }}</td>
+
+        </tr>
+
+    }
+
+</table>
