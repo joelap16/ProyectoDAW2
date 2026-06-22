@@ -1,57 +1,118 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { TicketService } from '../../../services/ticket/ticket-service';
 import { Ticket } from '../../../model/ticket/ticket';
 
-import { CommonModule } from '@angular/common';
+import { Tecnico } from '../../../model/tecnico/tecnico';
+import { TecnicoService } from '../../../services/tecnico/tecnico-service';
 
 @Component({
   selector: 'app-lista-tickets',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './lista-tickets.html',
   styleUrl: './lista-tickets.scss'
 })
 export class ListaTickets implements OnInit {
 
   tickets: Ticket[] = [];
+  tecnicos: Tecnico[] = [];
 
-  constructor(private ticketService: TicketService) {}
+  estados = ['ABIERTO', 'EN_PROGRESO', 'CERRADO'];
+
+  constructor(
+    private ticketService: TicketService,
+    private tecnicoService: TecnicoService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-
-    console.log("ngOnInit ejecutado");
-
     this.cargarTickets();
-
+    this.cargarTecnicos();
   }
 
   cargarTickets() {
+    this.ticketService.obtenerTickets().subscribe({
+      next: (data) => {
+        this.tickets = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error(err)
+    });
+  }
 
-    console.log("Cargando tickets...");
+  cargarTecnicos() {
+    this.tecnicoService.obtenerTecnicos().subscribe({
+      next: (data) => {
+        this.tecnicos = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error(err)
+    });
+  }
 
-    this.ticketService.obtenerTickets()
 
-      .subscribe({
+  estadosPermitidos(estadoActual: string): string[] {
+    switch (estadoActual) {
+      case 'ABIERTO':
+        return ['ABIERTO', 'EN_PROGRESO'];
+      case 'EN_PROGRESO':
+        return ['EN_PROGRESO', 'RESUELTO'];
+      case 'RESUELTO':
+        return ['RESUELTO'];
+      default:
+        return this.estados;
+    }
+  }
 
-        next: (data) => {
+  cambiarEstado(ticket: Ticket, nuevoEstado: string): void {
+    const estadoAnterior = ticket.estado;
 
-          console.log("Respuesta del backend:", data);
+    if (nuevoEstado === estadoAnterior) {
+      return;
+    }
 
-          this.tickets = data;
+    this.ticketService.cambiarEstado(ticket.id, nuevoEstado).subscribe({
+      next: (ticketActualizado) => {
+        ticket.estado = ticketActualizado.estado;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        ticket.estado = estadoAnterior;
+        this.cdr.detectChanges();
+        console.error(err);
+      }
+    });
+  }
 
-          console.log("Tickets asignados:", this.tickets);
+  eliminarTicket(id: number): void {
+    if (!confirm('¿Desea eliminar este ticket?')) {
+      return;
+    }
 
-        },
+    this.ticketService.eliminarTicket(id).subscribe({
+      next: () => {
+        this.tickets = this.tickets.filter(ticket => ticket.id !== id);
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error(err)
+    });
+  }
 
-        error: (err) => {
-
-          console.error(err);
-
+  asignarTecnico(ticket: Ticket, idTecnico: number): void {
+    this.ticketService.asignarTecnico(ticket.id, idTecnico).subscribe({
+      next: (ticketActualizado) => {
+        const index = this.tickets.findIndex(t => t.id === ticket.id);
+        if (index !== -1) {
+          this.tickets[index] = ticketActualizado;
+          this.cdr.detectChanges();
         }
-
-      });
-
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error(err)
+    });
   }
 
 }

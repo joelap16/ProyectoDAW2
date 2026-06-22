@@ -11,7 +11,9 @@ Cantidad de tickets: {{ tickets.length }}
         <th>Categoría</th>
         <th>Estado</th>
         <th>Usuario</th>
-        <th>Técnico</th>
+        <th>Técnico Actual</th>
+        <th>Reasignar Técnico</th>
+        <th>Acciones</th>
 
     </tr>
 
@@ -25,11 +27,66 @@ Cantidad de tickets: {{ tickets.length }}
 
             <td>{{ ticket.categoria }}</td>
 
-            <td>{{ ticket.estado }}</td>
+            <td>
+
+                <select
+                    [ngModel]="ticket.estado"
+                    (ngModelChange)="cambiarEstado(ticket, $event)"
+                    name="estado-{{ ticket.id }}">
+
+                    @for (estado of estadosPermitidos(ticket.estado); track estado) {
+
+                        <option [ngValue]="estado">
+                            {{ estado }}
+                        </option>
+
+                    }
+
+                </select>
+
+            </td>
 
             <td>{{ ticket.usuario }}</td>
 
             <td>{{ ticket.tecnico }}</td>
+
+            <td>
+
+                <select #tecnicoSelect>
+
+                    <option selected disabled>
+                        Seleccione un técnico
+                    </option>
+
+                    @for (tecnico of tecnicos; track tecnico.id) {
+
+                        <option [value]="tecnico.id">
+
+                            {{ tecnico.nombreCompleto }}
+                            - {{ tecnico.categoria }}
+
+                        </option>
+
+                    }
+
+                </select>
+
+                <button
+                    (click)="asignarTecnico(ticket, +tecnicoSelect.value)">
+
+                    Asignar
+
+                </button>
+
+            </td>
+
+            <td>
+
+                <button (click)="eliminarTicket(ticket.id)">
+                    Eliminar
+                </button>
+
+            </td>
 
         </tr>
 
