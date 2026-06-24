@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 
 public class TicketCreateDTO {
 
-	@NotBlank(message = "El título es obligatorio")
+    @NotBlank(message = "El título es obligatorio")
     @Size(max = 100, message = "El título no puede superar los 100 caracteres")
     private String titulo;
 
@@ -17,20 +17,15 @@ public class TicketCreateDTO {
     @NotNull(message = "Debe seleccionar una categoría")
     private Integer categoriaId;
 
-    @NotNull(message = "Debe indicar un usuario")
-    private Integer usuarioId;
-
     public TicketCreateDTO() {}
-    
-    public TicketCreateDTO(String titulo, String descripcion, Integer categoriaId, Integer usuarioId) {
-		super();
-		this.titulo = titulo;
-		this.descripcion = descripcion;
-		this.categoriaId = categoriaId;
-		this.usuarioId = usuarioId;
-	}
 
-	public String getTitulo() {
+    public TicketCreateDTO(String titulo, String descripcion, Integer categoriaId) {
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.categoriaId = categoriaId;
+    }
+
+    public String getTitulo() {
         return titulo;
     }
 
@@ -52,13 +47,5 @@ public class TicketCreateDTO {
 
     public void setCategoriaId(Integer categoriaId) {
         this.categoriaId = categoriaId;
-    }
-
-    public Integer getUsuarioId() {
-        return usuarioId;
-    }
-
-    public void setUsuarioId(Integer usuarioId) {
-        this.usuarioId = usuarioId;
     }
 }

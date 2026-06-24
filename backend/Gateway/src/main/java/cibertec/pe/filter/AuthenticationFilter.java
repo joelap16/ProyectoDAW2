@@ -24,7 +24,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 	
 	@Override
 	public GatewayFilter apply(Config config) {
-	    return ((exchange, chain) -> {
+	    return (exchange, chain) -> {
 	        if (validator.isSecured.test(exchange.getRequest())) {
 	            if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
 	                throw new RuntimeException("Missing authorization header");
@@ -38,10 +38,11 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 	            try {
 	                jwtUtil.validateToken(authHeader);
 	                Claims claims = jwtUtil.getClaims(authHeader);
+
 	                String rol = claims.get("rol", String.class);
 	                String path = exchange.getRequest().getURI().getPath();
+	                String email = claims.getSubject();
 
-	                // Reglas por ruta
 	                if (path.startsWith("/api/admin") && !rol.equals("ADMINISTRADOR")) {
 	                    throw new RuntimeException("Acceso denegado: se requiere rol ADMINISTRADOR");
 	                } else if (path.startsWith("/api/tecnico") && !rol.equals("TECNICO")) {
@@ -50,13 +51,25 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 	                    throw new RuntimeException("Acceso denegado: se requiere rol USUARIO");
 	                }
 
+	                return chain.filter(
+	                    exchange.mutate()
+	                        .request(
+	                            exchange.getRequest()
+	                                .mutate()
+	                                .header("X-User-Email", email)
+	                                .build()
+	                        )
+	                        .build()
+	                );
+
 	            } catch (Exception e) {
 	                System.out.println("invalid access...!");
 	                throw new RuntimeException("Unauthorized access to application");
 	            }
 	        }
+
 	        return chain.filter(exchange);
-	    });
+	    };
 	}
 		
 	public static class Config{

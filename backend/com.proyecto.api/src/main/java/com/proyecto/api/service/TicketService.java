@@ -3,8 +3,6 @@ package com.proyecto.api.service;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,278 +26,317 @@ import com.proyecto.api.repository.UsuarioRepositorio;
 @Service
 public class TicketService {
 
-	// REPOSITORIOS
-	
-	@Autowired
-	TicketRepository reposTicket;
-	
-	@Autowired
-	TecnicoRepository reposTecnico;
-	
-	@Autowired
-	EstadoTicketRepository reposEstadoTicket;
-	
-	@Autowired
-	CategoriaRepository reposCategoria;
-	
-	@Autowired
-	UsuarioRepositorio reposUsuario;
-	
-	// LISTAR
-			
-	public List<TicketResponseDTO> listarTickets() {
-	    return reposTicket.findAll()
-	            .stream()
-	            .map(this::convertirADTO)
-	            .toList();
-	}
-	
-		
-	// NEW LISTAR POR CATEGORIA
-	//
-	public List<TicketResponseDTO> listarTicketsPorCategoria(
-	        CategoriasEnum nombreCategoria) {
+    @Autowired
+    private TicketRepository reposTicket;
 
-	    return reposTicket.findByCategoria_NombreCategoria(nombreCategoria)
-	            .stream()
-	            .map(this::convertirADTO)
-	            .toList();
-	}
-	
-	// NEW LISTAR POR ESTADO
-	
-	public List<TicketResponseDTO> listarTicketsPorEstado(
-	        EstadosTicket estado) {
+    @Autowired
+    private TecnicoRepository reposTecnico;
 
-	    return reposTicket.findByEstado_NombreEstado(estado)
-	            .stream()
-	            .map(this::convertirADTO)
-	            .toList();
-	}
-		
-	// CREAR
-	
-	public TicketResponseDTO crearTicket(TicketCreateDTO dto) {
-	    Usuario usuario = reposUsuario.findById(dto.getUsuarioId())
-	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    @Autowired
+    private EstadoTicketRepository reposEstadoTicket;
 
-	    Categoria categoria = reposCategoria.findById(dto.getCategoriaId())
-	            .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+    @Autowired
+    private CategoriaRepository reposCategoria;
 
-	    EstadoTicket estadoInicial = reposEstadoTicket.findByNombreEstado(EstadosTicket.ABIERTO)
-	            .orElseThrow(() -> new RuntimeException("Estado ABIERTO no existe"));
+    @Autowired
+    private UsuarioRepositorio reposUsuario;
 
-	    Ticket ticket = new Ticket();
-	    ticket.setTitulo(dto.getTitulo());
-	    ticket.setDescripcion(dto.getDescripcion());
-	    ticket.setUsuario(usuario);
-	    ticket.setCategoria(categoria);
-	    ticket.setFechaCreacion(LocalDateTime.now());
-	    ticket.setEstado(estadoInicial);
+    // LISTAR TODOS (ADMIN U OTRO USO INTERNO)
+    public List<TicketResponseDTO> listarTickets() {
+        return reposTicket.findAll()
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
+    }
 
-	    // ASIGNAR TECNICO SEGUN CATEGORIA
-	    List<Tecnico> tecnicos = reposTecnico.findByCategoria(categoria);
+    // LISTAR POR CATEGORIA
+    public List<TicketResponseDTO> listarTicketsPorCategoria(CategoriasEnum nombreCategoria) {
+        return reposTicket.findByCategoria_NombreCategoria(nombreCategoria)
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
+    }
 
-	    if (tecnicos.isEmpty()) {
-	        throw new RuntimeException("No hay técnicos disponibles para esta categoría");
-	    }
+    // LISTAR POR ESTADO
+    public List<TicketResponseDTO> listarTicketsPorEstado(EstadosTicket estado) {
+        return reposTicket.findByEstado_NombreEstado(estado)
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
+    }
 
-	    Tecnico tecnicoAsignado = tecnicos.get(0); // luego puedes mejorar esto (RANDOM)
-	    // HOLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA POSIBLE MEJORAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-	    ticket.setTecnico(tecnicoAsignado);
+    // CREAR TICKET COMO USUARIO AUTENTICADO
+    public TicketResponseDTO crearTicket(String emailUsuario, TicketCreateDTO dto) {
+        Usuario usuario = reposUsuario.findByEmaUsuario(emailUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-	    Ticket ticketGuardado = reposTicket.save(ticket);
+        Categoria categoria = reposCategoria.findById(dto.getCategoriaId())
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
-	    return convertirADTO(ticketGuardado);
-	}
-	
+        EstadoTicket estadoInicial = reposEstadoTicket.findByNombreEstado(EstadosTicket.ABIERTO)
+                .orElseThrow(() -> new RuntimeException("Estado ABIERTO no existe"));
 
-	//
-	// ELIMINAR
-	
-	public void eliminarTicketPorId(int idTicket) {
-		
-		Ticket ticket = reposTicket.findById(idTicket)
-		        .orElseThrow(() ->
-		                new RuntimeException("El ticket no existe"));
-		
-		if (ticket.getEstado().getNombreEstado() == EstadosTicket.RESUELTO) {
-		    throw new RuntimeException(
-		            "No se puede eliminar un ticket finalizado");
-		}
+        Ticket ticket = new Ticket();
+        ticket.setTitulo(dto.getTitulo());
+        ticket.setDescripcion(dto.getDescripcion());
+        ticket.setUsuario(usuario);
+        ticket.setCategoria(categoria);
+        ticket.setFechaCreacion(LocalDateTime.now());
+        ticket.setEstado(estadoInicial);
 
-		reposTicket.delete(ticket);
-	}
-	
-	// ASIGNAR A TECNICO
-	
-	public TicketResponseDTO asignarATecnico(
-	        Integer idTicket,
-	        Integer idTecnico) {				
+        // ASIGNAR TECNICO AUTOMATICAMENTE SEGUN CATEGORIA
+        List<Tecnico> tecnicos = reposTecnico.findByCategoria(categoria);
 
-	    Ticket ticket = reposTicket.findById(idTicket)
-	            .orElseThrow(() ->
-	                    new RuntimeException("Ticket no encontrado"));
+        if (tecnicos.isEmpty()) {
+            throw new RuntimeException("No hay técnicos disponibles para esta categoría");
+        }
 
-	    Tecnico tecnico = reposTecnico.findById(idTecnico)
-	            .orElseThrow(() ->
-	                    new RuntimeException("Técnico no encontrado"));
-	    
-	    if (tecnico.getCategoria() == null) {
-	        throw new RuntimeException(
-	            "El técnico no tiene categoría asignada");
-	    }
+        Tecnico tecnicoAsignado = tecnicos.stream()
+                .min(Comparator.comparingInt(t -> reposTicket.countByTecnico_Id(t.getId())))
+                .orElseThrow(() -> new RuntimeException("Error al seleccionar técnico"));
 
-	    ticket.setTecnico(tecnico);
+        ticket.setTecnico(tecnicoAsignado);
 
-	    Ticket ticketActualizado = reposTicket.save(ticket);
+        Ticket ticketGuardado = reposTicket.save(ticket);
+        return convertirADTO(ticketGuardado);
+    }
 
-	    return convertirADTO(ticketActualizado);
-	}
-	
-	
-	
-	public TicketResponseDTO asignarTecnicoAutomaticamente(
-	        Integer idTicket) {
-	    Ticket ticket = reposTicket.findById(idTicket)
-	        .orElseThrow(() -> new RuntimeException("Ticket no encontrado"));
+    // LISTAR MIS TICKETS COMO USUARIO
+    public List<TicketResponseDTO> listarTicketsDelUsuarioAutenticado(String emailUsuario) {
+        Usuario usuario = obtenerUsuarioAutenticado(emailUsuario);
 
-	    CategoriasEnum categoria = ticket.getCategoria().getNombreCategoria();
+        return reposTicket.findByUsuario_IdUsuario(usuario.getIdUsuario())
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
+    }
 
-	    List<Tecnico> tecnicos = reposTecnico.findByCategoria_NombreCategoria(categoria);
+    // OBTENER DETALLE DE UN TICKET DEL USUARIO AUTENTICADO
+    public TicketResponseDTO obtenerTicketDelUsuarioAutenticado(String emailUsuario, Integer idTicket) {
+        Usuario usuario = obtenerUsuarioAutenticado(emailUsuario);
 
-	    if (tecnicos.isEmpty()) {
-	        throw new RuntimeException("No hay técnicos disponibles para esta categoría");
-	    }
+        Ticket ticket = reposTicket.findByIdTicketAndUsuario_IdUsuario(idTicket, usuario.getIdUsuario())
+                .orElseThrow(() -> new RuntimeException("Ticket no encontrado o no pertenece al usuario"));
 
-	    Tecnico tecnicoConMenosTickets = tecnicos.stream()
-	        .min(Comparator.comparingInt(t -> reposTicket.countByTecnico_Id(t.getId())))
-	        .orElseThrow(() -> new RuntimeException("Error al seleccionar técnico"));
+        return convertirADTO(ticket);
+    }
 
-	    ticket.setTecnico(tecnicoConMenosTickets);
-	    Ticket ticketActualizado = reposTicket.save(ticket);
+    // LISTAR MIS TICKETS COMO TECNICO CON FILTROS OPCIONALES
+    public List<TicketResponseDTO> listarTicketsDelTecnicoAutenticado(
+            String emailTecnico,
+            String estado,
+            String categoria) {
 
-	    return convertirADTO(ticketActualizado);
-	}
+        Tecnico tecnico = obtenerTecnicoAutenticado(emailTecnico);
 
-	
-	//
-	// ACTUALIZAR ESTADOS
-	
-	public TicketResponseDTO actualizarEstadoTicket(
-	        Integer idTicket,
-	        EstadosTicket nuevoEstado) {
+        List<Ticket> tickets = reposTicket.findByTecnico_Id(tecnico.getId());
 
-	    Ticket ticket = reposTicket.findById(idTicket)
-	            .orElseThrow(() ->
-	                    new RuntimeException("Ticket no encontrado"));
-	    
-	    if (ticket.getEstado().getNombreEstado() == EstadosTicket.RESUELTO) {
-	        throw new RuntimeException(
-	                "El ticket ya está finalizado y no puede modificarse");
-	    }
-	    
-	    if (nuevoEstado == EstadosTicket.ABIERTO) {
-	        throw new RuntimeException(
-	                "No se puede volver a poner el ticket en estado ABIERTO");
-	    }
+        if (estado != null && !estado.isBlank()) {
+            EstadosTicket estadoEnum = EstadosTicket.valueOf(estado.toUpperCase());
+            tickets = tickets.stream()
+                    .filter(t -> t.getEstado() != null
+                            && t.getEstado().getNombreEstado() == estadoEnum)
+                    .toList();
+        }
 
-	    EstadoTicket estado =
-	            reposEstadoTicket.findByNombreEstado(nuevoEstado)
-	            .orElseThrow(() ->
-	                    new RuntimeException("Estado no encontrado"));
+        if (categoria != null && !categoria.isBlank()) {
+            CategoriasEnum categoriaEnum = CategoriasEnum.valueOf(categoria.toUpperCase());
+            tickets = tickets.stream()
+                    .filter(t -> t.getCategoria() != null
+                            && t.getCategoria().getNombreCategoria() == categoriaEnum)
+                    .toList();
+        }
 
-	    ticket.setEstado(estado);
+        return tickets.stream()
+                .map(this::convertirADTO)
+                .toList();
+    }
 
-	    Ticket ticketActualizado = reposTicket.save(ticket);
+    // OBTENER DETALLE DE UN TICKET DEL TECNICO AUTENTICADO
+    public TicketResponseDTO obtenerTicketDelTecnicoAutenticado(String emailTecnico, Integer idTicket) {
+        Tecnico tecnico = obtenerTecnicoAutenticado(emailTecnico);
 
-	    return convertirADTO(ticketActualizado);
-	}
-	
-	//
-	// ************ ATENDER TICKET *************
-	
-	//
-	// NEW ATENDER TICKET
-	
-	public TicketResponseDTO atenderTicket(
-	        Integer idTicket,
-	        TicketUpdateDTO dto) {
+        Ticket ticket = reposTicket.findByIdTicketAndTecnico_Id(idTicket, tecnico.getId())
+                .orElseThrow(() -> new RuntimeException("Ticket no encontrado o no asignado al técnico"));
 
-	    Ticket ticket = reposTicket.findById(idTicket)
-	            .orElseThrow(() ->
-	                    new RuntimeException("Ticket no encontrado"));
-	    
-	    if (ticket.getEstado().getNombreEstado() == EstadosTicket.RESUELTO) {
-	        throw new RuntimeException(
-	                "El ticket ya está finalizado y no puede modificarse");
-	    }
+        return convertirADTO(ticket);
+    }
 
-	    if(dto.getEstado() == EstadosTicket.ABIERTO) {
-	        throw new RuntimeException(
-	                "No se puede volver a poner el ticket en estado ABIERTO");
-	    }
+    // ATENDER TICKET COMO TECNICO AUTENTICADO
+    public TicketResponseDTO atenderTicketDelTecnico(
+            String emailTecnico,
+            Integer idTicket,
+            TicketUpdateDTO dto) {
 
-	    EstadoTicket estadoEntidad =
-	            reposEstadoTicket.findByNombreEstado(dto.getEstado())
-	            .orElseThrow(() ->
-	                    new RuntimeException("Estado no encontrado"));
+        Tecnico tecnico = obtenerTecnicoAutenticado(emailTecnico);
 
-	    ticket.setEstado(estadoEntidad);
-	    ticket.setComentarios(dto.getComentario());
-	    
-	    
+        Ticket ticket = reposTicket.findByIdTicketAndTecnico_Id(idTicket, tecnico.getId())
+                .orElseThrow(() -> new RuntimeException("Ticket no encontrado o no asignado al técnico"));
 
-	    Ticket ticketActualizado = reposTicket.save(ticket);
+        if (ticket.getEstado().getNombreEstado() == EstadosTicket.RESUELTO) {
+            throw new RuntimeException("El ticket ya está finalizado y no puede modificarse");
+        }
 
-	    return convertirADTO(ticketActualizado);
-	}
-	
-	
-	//
-	// DTO - CONVERTIR TICKET A DTO
-	
-	private TicketResponseDTO convertirADTO(Ticket ticket) {
-		
-		TicketResponseDTO dto = new TicketResponseDTO();
-		
-		dto.setId(ticket.getIdTicket());
-	    dto.setTitulo(ticket.getTitulo());
-	    dto.setDescripcion(ticket.getDescripcion());
-	    
-	    dto.setFechaCreacion(ticket.getFechaCreacion());
-	    
-	    if (ticket.getEstado() != null) {
-	        dto.setEstado(ticket.getEstado().getNombreEstado().name());
-	    }
+        if (dto.getEstado() == EstadosTicket.ABIERTO) {
+            throw new RuntimeException("No se puede volver a poner el ticket en estado ABIERTO");
+        }
 
-	    if (ticket.getCategoria() != null) {
-	        dto.setCategoria(ticket.getCategoria().getNombreCategoria().name());
-	    }
+        EstadoTicket estadoEntidad = reposEstadoTicket.findByNombreEstado(dto.getEstado())
+                .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
 
-	    if (ticket.getUsuario() != null) {
-	        dto.setUsuario(
-	            ticket.getUsuario().getNomUsuario() + " " +
-	            ticket.getUsuario().getApeUsuario()
-	        );
-	    }
+        ticket.setEstado(estadoEntidad);
+        ticket.setComentarios(dto.getComentario());
 
-	    if (ticket.getTecnico() != null) {
-	        dto.setTecnico(
-	            ticket.getTecnico().getNombreTecnico() + " " +
-	            ticket.getTecnico().getApellidoTecnico()
-	        );
-	    }
+        Ticket ticketActualizado = reposTicket.save(ticket);
+        return convertirADTO(ticketActualizado);
+    }
 
-	    return dto;
-	}
-	
-	// OBTENER TICKET POR ID (DTO)
-	
-	public TicketResponseDTO obtenerTicketPorId(int idTicket) {
-	    Ticket ticket = reposTicket.findById(idTicket)
-	            .orElseThrow(() -> new RuntimeException("Ticket no encontrado"));
-	    return convertirADTO(ticket);
-	}
-	
+    // ELIMINAR TICKET
+    public void eliminarTicketPorId(int idTicket) {
+        Ticket ticket = reposTicket.findById(idTicket)
+                .orElseThrow(() -> new RuntimeException("El ticket no existe"));
+
+        if (ticket.getEstado().getNombreEstado() == EstadosTicket.RESUELTO) {
+            throw new RuntimeException("No se puede eliminar un ticket finalizado");
+        }
+
+        reposTicket.delete(ticket);
+    }
+
+    // ASIGNAR A TECNICO MANUALMENTE
+    public TicketResponseDTO asignarATecnico(Integer idTicket, Integer idTecnico) {
+        Ticket ticket = reposTicket.findById(idTicket)
+                .orElseThrow(() -> new RuntimeException("Ticket no encontrado"));
+
+        Tecnico tecnico = reposTecnico.findById(idTecnico)
+                .orElseThrow(() -> new RuntimeException("Técnico no encontrado"));
+
+        if (tecnico.getCategoria() == null) {
+            throw new RuntimeException("El técnico no tiene categoría asignada");
+        }
+
+        ticket.setTecnico(tecnico);
+
+        Ticket ticketActualizado = reposTicket.save(ticket);
+        return convertirADTO(ticketActualizado);
+    }
+
+    // ASIGNAR AUTOMATICAMENTE SEGUN CATEGORIA Y MENOR CARGA
+    public TicketResponseDTO asignarTecnicoAutomaticamente(Integer idTicket) {
+        Ticket ticket = reposTicket.findById(idTicket)
+                .orElseThrow(() -> new RuntimeException("Ticket no encontrado"));
+
+        CategoriasEnum categoria = ticket.getCategoria().getNombreCategoria();
+
+        List<Tecnico> tecnicos = reposTecnico.findByCategoria_NombreCategoria(categoria);
+
+        if (tecnicos.isEmpty()) {
+            throw new RuntimeException("No hay técnicos disponibles para esta categoría");
+        }
+
+        Tecnico tecnicoConMenosTickets = tecnicos.stream()
+                .min(Comparator.comparingInt(t -> reposTicket.countByTecnico_Id(t.getId())))
+                .orElseThrow(() -> new RuntimeException("Error al seleccionar técnico"));
+
+        ticket.setTecnico(tecnicoConMenosTickets);
+
+        Ticket ticketActualizado = reposTicket.save(ticket);
+        return convertirADTO(ticketActualizado);
+    }
+
+    // ACTUALIZAR ESTADO GENERAL
+    public TicketResponseDTO actualizarEstadoTicket(Integer idTicket, EstadosTicket nuevoEstado) {
+        Ticket ticket = reposTicket.findById(idTicket)
+                .orElseThrow(() -> new RuntimeException("Ticket no encontrado"));
+
+        if (ticket.getEstado().getNombreEstado() == EstadosTicket.RESUELTO) {
+            throw new RuntimeException("El ticket ya está finalizado y no puede modificarse");
+        }
+
+        if (nuevoEstado == EstadosTicket.ABIERTO) {
+            throw new RuntimeException("No se puede volver a poner el ticket en estado ABIERTO");
+        }
+
+        EstadoTicket estado = reposEstadoTicket.findByNombreEstado(nuevoEstado)
+                .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
+
+        ticket.setEstado(estado);
+
+        Ticket ticketActualizado = reposTicket.save(ticket);
+        return convertirADTO(ticketActualizado);
+    }
+
+    // ATENDER TICKET GENERAL
+    public TicketResponseDTO atenderTicket(Integer idTicket, TicketUpdateDTO dto) {
+        Ticket ticket = reposTicket.findById(idTicket)
+                .orElseThrow(() -> new RuntimeException("Ticket no encontrado"));
+
+        if (ticket.getEstado().getNombreEstado() == EstadosTicket.RESUELTO) {
+            throw new RuntimeException("El ticket ya está finalizado y no puede modificarse");
+        }
+
+        if (dto.getEstado() == EstadosTicket.ABIERTO) {
+            throw new RuntimeException("No se puede volver a poner el ticket en estado ABIERTO");
+        }
+
+        EstadoTicket estadoEntidad = reposEstadoTicket.findByNombreEstado(dto.getEstado())
+                .orElseThrow(() -> new RuntimeException("Estado no encontrado"));
+
+        ticket.setEstado(estadoEntidad);
+        ticket.setComentarios(dto.getComentario());
+
+        Ticket ticketActualizado = reposTicket.save(ticket);
+        return convertirADTO(ticketActualizado);
+    }
+
+    // OBTENER TICKET POR ID
+    public TicketResponseDTO obtenerTicketPorId(int idTicket) {
+        Ticket ticket = reposTicket.findById(idTicket)
+                .orElseThrow(() -> new RuntimeException("Ticket no encontrado"));
+        return convertirADTO(ticket);
+    }
+
+    // CONVERTIR A DTO
+    private TicketResponseDTO convertirADTO(Ticket ticket) {
+        TicketResponseDTO dto = new TicketResponseDTO();
+
+        dto.setId(ticket.getIdTicket());
+        dto.setTitulo(ticket.getTitulo());
+        dto.setDescripcion(ticket.getDescripcion());
+        dto.setFechaCreacion(ticket.getFechaCreacion());
+
+        if (ticket.getEstado() != null) {
+            dto.setEstado(ticket.getEstado().getNombreEstado().name());
+        }
+
+        if (ticket.getCategoria() != null) {
+            dto.setCategoria(ticket.getCategoria().getNombreCategoria().name());
+        }
+
+        if (ticket.getUsuario() != null) {
+            dto.setUsuario(
+                    ticket.getUsuario().getNomUsuario() + " " +
+                    ticket.getUsuario().getApeUsuario()
+            );
+        }
+
+        if (ticket.getTecnico() != null) {
+            dto.setTecnico(
+                    ticket.getTecnico().getNombreTecnico() + " " +
+                    ticket.getTecnico().getApellidoTecnico()
+            );
+        }
+
+        return dto;
+    }
+
+    private Usuario obtenerUsuarioAutenticado(String emailUsuario) {
+        return reposUsuario.findByEmaUsuario(emailUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado"));
+    }
+
+    private Tecnico obtenerTecnicoAutenticado(String emailTecnico) {
+        return reposTecnico.findByUsuario_EmaUsuario(emailTecnico)
+                .orElseThrow(() -> new RuntimeException("Técnico autenticado no encontrado"));
+    }
 }

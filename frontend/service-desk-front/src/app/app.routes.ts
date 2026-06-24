@@ -19,6 +19,9 @@ import { TecnicosAdmin } from './pages/admin/tecnicos-admin/tecnicos-admin';
 
 import { UsuariosAdmin } from './pages/admin/usuarios-admin/usuarios-admin';
 
+import { MisTicketsComponent } from './pages/usuario/mis-tickets/mis-tickets';
+import { CrearTicketComponent } from './pages/usuario/crear-ticket/crear-ticket';
+
 export const routes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
 
@@ -81,8 +84,17 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardUsuario
-      }
+      },
 
+      {
+        path: 'crear-ticket',
+        component: CrearTicketComponent
+      },
+
+      {
+        path: 'mis-tickets',
+        component: MisTicketsComponent
+      }
     ]
 
   } 

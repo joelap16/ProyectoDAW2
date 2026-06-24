@@ -1,0 +1,40 @@
+<section class="tickets-card">
+  <div class="header">
+    <h2>Mis tickets</h2>
+    <button (click)="cargarTickets()">Recargar</button>
+  </div>
+
+  <p class="info">Aquí verás los tickets creados con tu usuario.</p>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <div *ngIf="isLoading" class="loading">Cargando tickets...</div>
+
+  <div *ngIf="!isLoading && tickets.length === 0" class="empty">
+    Aún no tienes tickets registrados.
+  </div>
+
+  <table *ngIf="!isLoading && tickets.length > 0" class="tickets-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Categoría</th>
+        <th>Estado</th>
+        <th>Técnico</th>
+        <th>Fecha</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let ticket of tickets; trackBy: trackByTicketId">
+        <td>{{ ticket.id }}</td>
+        <td>{{ ticket.titulo }}</td>
+        <td>{{ ticket.categoria }}</td>
+        <td>{{ ticket.estado }}</td>
+        <td>{{ ticket.tecnico }}</td>
+        <td>{{ ticket.fechaCreacion | date:'short' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</section>

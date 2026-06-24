@@ -6,6 +6,4 @@ export interface TicketCreate {
 
   categoriaId: number;
 
-  usuarioId: number;
-
 }

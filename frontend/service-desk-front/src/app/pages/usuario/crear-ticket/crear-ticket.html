@@ -1,0 +1,47 @@
+<section class="ticket-form-card">
+  <h2>Crear ticket</h2>
+
+  <p class="info">
+    Completa los datos del problema. La categoría se envía por ID.
+  </p>
+
+  <form [formGroup]="form" (ngSubmit)="enviar()">
+    <div class="field">
+      <label for="titulo">Título</label>
+      <input id="titulo" type="text" formControlName="titulo" />
+      <small *ngIf="titulo?.touched && titulo?.invalid">
+        <span *ngIf="titulo?.errors?.['required']">El título es obligatorio.</span>
+        <span *ngIf="titulo?.errors?.['maxlength']">Máximo 100 caracteres.</span>
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="descripcion">Descripción</label>
+      <textarea id="descripcion" rows="6" formControlName="descripcion"></textarea>
+      <small *ngIf="descripcion?.touched && descripcion?.invalid">
+        <span *ngIf="descripcion?.errors?.['required']">La descripción es obligatoria.</span>
+        <span *ngIf="descripcion?.errors?.['maxlength']">Máximo 500 caracteres.</span>
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="categoriaId">Categoría (ID)</label>
+      <input id="categoriaId" type="number" formControlName="categoriaId" min="1" />
+      <small *ngIf="categoriaId?.touched && categoriaId?.invalid">
+        <span *ngIf="categoriaId?.errors?.['required']">Debes seleccionar una categoría.</span>
+        <span *ngIf="categoriaId?.errors?.['min']">El ID debe ser mayor que 0.</span>
+      </small>
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="isLoading">
+        {{ isLoading ? 'Creando...' : 'Crear ticket' }}
+      </button>
+
+      <a routerLink="/usuario/mis-tickets">Ver mis tickets</a>
+    </div>
+  </form>
+
+  <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+</section>

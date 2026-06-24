@@ -34,7 +34,7 @@ export class ListaTickets implements OnInit {
   }
 
   cargarTickets() {
-    this.ticketService.obtenerTickets().subscribe({
+    this.ticketService.obtenerTicketsAdmin().subscribe({
       next: (data) => {
         this.tickets = data;
         this.cdr.detectChanges();
