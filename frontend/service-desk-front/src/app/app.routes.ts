@@ -17,6 +17,8 @@ import { ListaTickets } from './pages/admin/lista-tickets/lista-tickets';
 
 import { TecnicosAdmin } from './pages/admin/tecnicos-admin/tecnicos-admin';
 
+import { UsuariosAdmin } from './pages/admin/usuarios-admin/usuarios-admin';
+
 export const routes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
 
@@ -43,7 +45,12 @@ export const routes: Routes = [
       {
         path: 'tecnicos',
         component: TecnicosAdmin
-      } 
+      },
+
+      {
+        path: 'usuarios',
+        component: UsuariosAdmin
+      }
     ]
     
   },

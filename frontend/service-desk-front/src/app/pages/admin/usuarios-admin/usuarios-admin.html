@@ -1,1 +1,53 @@
-<p>usuarios-admin works!</p>
+<h2>Lista de Usuarios</h2>
+
+Cantidad de usuarios: {{ usuarios.length }}
+
+<table border="1">
+  <tr>
+    <th>ID</th>
+    <th>Nombre</th>
+    <th>Apellido</th>
+    <th>Email</th>
+    <th>Rol</th>
+    <th>Editar</th>
+  </tr>
+
+  @for (usuario of usuarios; track usuario.id) {
+    <tr>
+      <td>{{ usuario.id }}</td>
+
+      <td>
+        @if (esEditando(usuario)) {
+          <input
+            [(ngModel)]="usuarioEditando!.nombre"
+            name="nombre-{{ usuario.id }}">
+        } @else {
+          {{ usuario.nombre }}
+        }
+      </td>
+
+      <td>
+        @if (esEditando(usuario)) {
+          <input
+            [(ngModel)]="usuarioEditando!.apellido"
+            name="apellido-{{ usuario.id }}">
+        } @else {
+          {{ usuario.apellido }}
+        }
+      </td>
+
+      <td>{{ usuario.email }}</td>
+
+      <td>{{ usuario.rol }}</td>
+
+      <td>
+        @if (!esEditando(usuario)) {
+          <button (click)="editarUsuario(usuario)">Editar</button>
+        } @else {
+          <button (click)="guardarCambios()">Guardar</button>
+          <button (click)="cancelarEdicion()">Cancelar</button>
+        }
+      </td>
+    </tr>
+  }
+</table>

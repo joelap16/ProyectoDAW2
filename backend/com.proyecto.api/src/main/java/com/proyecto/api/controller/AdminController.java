@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.proyecto.api.dto.tecnico.TecnicoResponseDTO;
 import com.proyecto.api.dto.ticket.TicketResponseDTO;
+import com.proyecto.api.dto.usuario.RolResponseDTO;
 import com.proyecto.api.dto.usuario.UsuarioCreateDTO;
 import com.proyecto.api.dto.usuario.UsuarioResponseDTO;
 import com.proyecto.api.enums.EstadosTicket;
 import com.proyecto.api.model.Tecnico;
 import com.proyecto.api.model.Ticket;
 import com.proyecto.api.model.Usuario;
+import com.proyecto.api.repository.RolUsuarioRepository;
 import com.proyecto.api.service.TecnicoService;
 import com.proyecto.api.service.TicketService;
 import com.proyecto.api.service.UsuarioService;
@@ -41,6 +43,9 @@ public class AdminController {
 	
 	@Autowired
 	TicketService ticketService;
+	
+	@Autowired
+	RolUsuarioRepository reposRolUsuario;
 	
 	// GESTIONAR USUARIOS
 	// GET - LISTAR TODOS LOS USUARIOS
@@ -132,11 +137,23 @@ public class AdminController {
  	                    nuevoEstado));
  	}
  	
- 	// DELETE - ELIMINAR UN TICKET POR SU ID
+ 	// DELETE - ELIMINAR UN TICKET POR SU ID 
+ 	
+ 	// NO IMPLEMENTADO EN USUARIOS, PARA FUTURA MEJORA
 	
  	@DeleteMapping("/tickets/{id}")
  	public ResponseEntity<String> eliminarTicket(@PathVariable("id") int idTicket) {
  	    ticketService.eliminarTicketPorId(idTicket);
  	    return ResponseEntity.ok("Ticket eliminado correctamente");
+ 	}
+ 	
+ 	// ROLES
+ 	
+ 	@GetMapping("/roles")
+ 	public List<RolResponseDTO> listarRoles() {
+ 	    return reposRolUsuario.findAll()
+ 	        .stream()
+ 	        .map(r -> new RolResponseDTO(r.getIdRol(), r.getNombreRol().name()))
+ 	        .toList();
  	}
 }

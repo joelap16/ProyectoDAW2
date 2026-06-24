@@ -129,7 +129,8 @@ public class UsuarioService {
 	    UsuarioResponseDTO dto = new UsuarioResponseDTO();
 
 	    dto.setId(usuario.getIdUsuario());
-	    dto.setNombreCompleto(usuario.getNomUsuario() + " " + usuario.getApeUsuario());
+	    dto.setNombre(usuario.getNomUsuario());
+	    dto.setApellido(usuario.getApeUsuario());
 	    dto.setEmail(usuario.getEmaUsuario());
 
 	    if (usuario.getRol() != null) {

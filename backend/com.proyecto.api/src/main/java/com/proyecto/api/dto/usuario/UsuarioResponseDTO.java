@@ -1,23 +1,23 @@
 package com.proyecto.api.dto.usuario;
 
 public class UsuarioResponseDTO {
-
     private Integer id;
-    private String nombreCompleto;
+    private String nombre;
+    private String apellido;
     private String email;
     private String rol;
-    
-	public UsuarioResponseDTO() {
-		super();
-	}
+    private Integer rolId;
 
-	public UsuarioResponseDTO(Integer id, String nombreCompleto, String email, String rol) {
-		super();
-		this.id = id;
-		this.nombreCompleto = nombreCompleto;
-		this.email = email;
-		this.rol = rol;
-	}
+    public UsuarioResponseDTO() {}
+
+    public UsuarioResponseDTO(Integer id, String nombre, String apellido, String email, String rol, Integer rolId) {
+        this.id = id;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.email = email;
+        this.rol = rol;
+        this.rolId = rolId;
+    }
 
 	public Integer getId() {
 		return id;
@@ -27,12 +27,20 @@ public class UsuarioResponseDTO {
 		this.id = id;
 	}
 
-	public String getNombreCompleto() {
-		return nombreCompleto;
+	public String getNombre() {
+		return nombre;
 	}
 
-	public void setNombreCompleto(String nombreCompleto) {
-		this.nombreCompleto = nombreCompleto;
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getApellido() {
+		return apellido;
+	}
+
+	public void setApellido(String apellido) {
+		this.apellido = apellido;
 	}
 
 	public String getEmail() {
@@ -49,6 +57,15 @@ public class UsuarioResponseDTO {
 
 	public void setRol(String rol) {
 		this.rol = rol;
-	}    
+	}
+
+	public Integer getRolId() {
+		return rolId;
+	}
+
+	public void setRolId(Integer rolId) {
+		this.rolId = rolId;
+	}
+
 
 }
