@@ -1,0 +1,67 @@
+<h2>Lista de Técnicos</h2>
+
+Cantidad de técnicos: {{ tecnicos.length }}
+
+<table border="1">
+
+    <tr>
+
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Categoría actual</th>
+        <th>Asignar categoría</th>
+
+    </tr>
+
+    @for (tecnico of tecnicos; track tecnico.id) {
+
+        <tr>
+
+            <td>{{ tecnico.id }}</td>
+
+            <td>{{ tecnico.nombreCompleto }}</td>
+
+            <td>{{ tecnico.email }}</td>
+
+            <td>{{ tecnico.categoria }}</td>
+
+            <td>
+
+                <select #categoriaSelect>
+
+                    <option selected disabled>
+
+                        Seleccione categoría
+
+                    </option>
+
+                    @for (categoria of categorias; track categoria.id) {
+
+                        <option [value]="categoria.id">
+
+                            {{ categoria.nombre }}
+
+                        </option>
+
+                    }
+
+                </select>
+
+                <button
+                    (click)="asignarCategoria(
+                        tecnico.id,
+                        +categoriaSelect.value
+                    )">
+
+                    Asignar
+
+                </button>
+
+            </td>
+
+        </tr>
+
+    }
+
+</table>

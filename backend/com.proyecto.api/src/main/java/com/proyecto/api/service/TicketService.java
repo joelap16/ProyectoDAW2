@@ -135,7 +135,7 @@ public class TicketService {
 	
 	public TicketResponseDTO asignarATecnico(
 	        Integer idTicket,
-	        Integer idTecnico) {
+	        Integer idTecnico) {				
 
 	    Ticket ticket = reposTicket.findById(idTicket)
 	            .orElseThrow(() ->
@@ -144,6 +144,11 @@ public class TicketService {
 	    Tecnico tecnico = reposTecnico.findById(idTecnico)
 	            .orElseThrow(() ->
 	                    new RuntimeException("Técnico no encontrado"));
+	    
+	    if (tecnico.getCategoria() == null) {
+	        throw new RuntimeException(
+	            "El técnico no tiene categoría asignada");
+	    }
 
 	    ticket.setTecnico(tecnico);
 

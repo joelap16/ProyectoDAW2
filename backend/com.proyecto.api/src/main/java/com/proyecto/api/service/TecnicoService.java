@@ -31,16 +31,24 @@ public class TecnicoService {
 	            .toList();
 	}
 	
-	public void asignarCategoriaATecnico(int idTecnico, int idCategoria) {
-        Tecnico tecnico = reposTecnico.findById(idTecnico)
-            .orElseThrow(() -> new RuntimeException("Técnico no encontrado"));
+	public TecnicoResponseDTO asignarCategoriaATecnico(
+	        int idTecnico,
+	        int idCategoria) {
 
-        Categoria categoria = reposCategorias.findById(idCategoria)
-            .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+	    Tecnico tecnico = reposTecnico.findById(idTecnico)
+	            .orElseThrow(() ->
+	                    new RuntimeException("Técnico no encontrado"));
 
-        tecnico.setCategoria(categoria);
-        reposTecnico.save(tecnico);
-    }
+	    Categoria categoria = reposCategorias.findById(idCategoria)
+	            .orElseThrow(() ->
+	                    new RuntimeException("Categoría no encontrada"));
+
+	    tecnico.setCategoria(categoria);
+
+	    Tecnico tecnicoActualizado = reposTecnico.save(tecnico);
+
+	    return convertirADTO(tecnicoActualizado);
+	}
 	
 	// DTO
 	//

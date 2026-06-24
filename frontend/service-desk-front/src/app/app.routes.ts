@@ -15,6 +15,8 @@ import { UsuarioLayout } from './layouts/usuario-layout/usuario-layout';
 
 import { ListaTickets } from './pages/admin/lista-tickets/lista-tickets';
 
+import { TecnicosAdmin } from './pages/admin/tecnicos-admin/tecnicos-admin';
+
 export const routes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
 
@@ -33,11 +35,15 @@ export const routes: Routes = [
         component: DashboardAdmin
       },
 
-      {
+      { 
         path: 'tickets',
         component: ListaTickets
-      }
+      },
 
+      {
+        path: 'tecnicos',
+        component: TecnicosAdmin
+      } 
     ]
     
   },

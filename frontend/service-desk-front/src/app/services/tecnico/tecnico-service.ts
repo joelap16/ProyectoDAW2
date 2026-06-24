@@ -17,4 +17,19 @@ export class TecnicoService {
   obtenerTecnicos(): Observable<Tecnico[]> {
     return this.http.get<Tecnico[]>(this.apiUrl);
   }
+
+  asignarCategoria(
+    tecnicoId: number,
+    categoriaId: number
+  ): Observable<Tecnico> {
+
+    return this.http.put<Tecnico>(
+      `${this.apiUrl}/${tecnicoId}/categoria?categoriaId=${categoriaId}`,
+      {}
+    );
+
+  }
+
+  
+
 } 

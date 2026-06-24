@@ -89,14 +89,15 @@ public class AdminController {
 	// ASIGNAR CATEGORIA DE TECNICOS	
 	// EL IDCATEGORIA SE ENVIA SOLO COMO PARAMETRO
 	
-	@PutMapping("/tecnicos/{id}/categoria")
-	public ResponseEntity<String> asignarCategoria(
+		@PutMapping("/tecnicos/{id}/categoria")
+	public ResponseEntity<TecnicoResponseDTO> asignarCategoria(
 	        @PathVariable Integer id,
 	        @RequestParam Integer categoriaId) {
 
-	    tecnicoService.asignarCategoriaATecnico(id, categoriaId);
-
-	    return ResponseEntity.ok("Categoría asignada con éxito");
+	    return ResponseEntity.ok(
+	            tecnicoService.asignarCategoriaATecnico(
+	                    id,
+	                    categoriaId));
 	}
     
     // GESTIONAR TICKETS
