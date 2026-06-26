@@ -23,13 +23,13 @@ public class TecnicoController {
     // LISTAR MIS TICKETS, CON FILTROS OPCIONALES POR ESTADO Y CATEGORIA
     @GetMapping("/tickets/mis")
     public ResponseEntity<List<TicketResponseDTO>> listarMisTickets(
-            Principal principal,
+            @RequestHeader("X-User-Email") String email,
             @RequestParam(required = false) String estado,
             @RequestParam(required = false) String categoria) {
 
         return ResponseEntity.ok(
                 ticketService.listarTicketsDelTecnicoAutenticado(
-                        principal.getName(),
+                        email,
                         estado,
                         categoria
                 )
@@ -39,23 +39,23 @@ public class TecnicoController {
     // OBTENER DETALLE DE UN TICKET SOLO SI ESTÁ ASIGNADO AL TECNICO AUTENTICADO
     @GetMapping("/tickets/{idTicket}")
     public ResponseEntity<TicketResponseDTO> obtenerTicketPorId(
-            Principal principal,
+    		@RequestHeader("X-User-Email") String email,
             @PathVariable Integer idTicket) {
 
         return ResponseEntity.ok(
-                ticketService.obtenerTicketDelTecnicoAutenticado(principal.getName(), idTicket)
+                ticketService.obtenerTicketDelTecnicoAutenticado(email, idTicket)
         );
     }
 
     // ATENDER / CAMBIAR ESTADO DEL TICKET
     @PutMapping("/tickets/{idTicket}/estado")
     public ResponseEntity<TicketResponseDTO> atenderTicket(
-            Principal principal,
+    		@RequestHeader("X-User-Email") String email,
             @PathVariable Integer idTicket,
             @Valid @RequestBody TicketUpdateDTO dto) {
 
         return ResponseEntity.ok(
-                ticketService.atenderTicketDelTecnico(principal.getName(), idTicket, dto)
+                ticketService.atenderTicketDelTecnico(email, idTicket, dto)
         );
     }
 }

@@ -8,6 +8,8 @@ import { JwtPayload } from '../../model/jwt-payload';
 
 import { environment } from '../../environments/environment';
 
+import { RegisterRequest } from '../../model/register-request';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -96,5 +98,16 @@ export class AuthService {
     return token !== null && !this.isTokenExpired();
 
   }
+
+  // REGISTER
+  register(data: RegisterRequest): Observable<string> {
+
+    return this.http.post(
+      `${this.apiUrl}/register`,
+      data,
+    { responseType: 'text' }
+  );
+
+}
 
 }

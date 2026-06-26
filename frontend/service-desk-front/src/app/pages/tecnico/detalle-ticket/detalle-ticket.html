@@ -1,0 +1,110 @@
+<h2>Detalle del Ticket</h2>
+
+<div *ngIf="cargando">
+  Cargando ticket...
+</div>
+
+<div *ngIf="error">
+  {{ error }}
+</div>
+
+<div *ngIf="!cargando && ticket">
+
+  <p>
+    <strong>ID:</strong>
+    {{ ticket.id }}
+  </p>
+
+  <p>
+    <strong>Título:</strong>
+    {{ ticket.titulo }}
+  </p>
+
+  <p>
+    <strong>Descripción:</strong>
+    {{ ticket.descripcion }}
+  </p>
+
+  <p>
+    <strong>Categoría:</strong>
+    {{ ticket.categoria }}
+  </p>
+
+  <p>
+    <strong>Estado actual:</strong>
+    {{ ticket.estado }}
+  </p>
+
+  <p>
+    <strong>Usuario:</strong>
+    {{ ticket.usuario }}
+  </p>
+
+  <hr>
+
+  <div>
+
+    <label>
+      Nuevo Estado:
+    </label>
+
+    <br>
+
+    <select [(ngModel)]="estado">
+
+      <option value="EN_PROGRESO">
+        EN_PROGRESO
+      </option>
+
+      <option value="RESUELTO">
+        RESUELTO
+      </option>
+
+    </select>
+
+  </div>
+
+  <br>
+
+  <div>
+
+    <label>
+      Comentario:
+    </label>
+
+    <br>
+
+    <textarea
+      [(ngModel)]="comentario"
+      rows="5"
+      cols="60">
+    </textarea>
+
+  </div>
+
+  <br>
+
+  <button
+    *ngIf="!ticketResuelto"
+    (click)="guardarCambios()">
+
+    Guardar cambios
+
+</button>
+
+    <div *ngIf="ticketResuelto">
+
+    <strong>
+        Este ticket ya fue resuelto y no puede modificarse.
+    </strong>
+
+    </div>
+
+  <button
+    [routerLink]="['/tecnico/mis-tickets-tecnico']">
+
+    Volver
+
+  </button>
+
+</div>

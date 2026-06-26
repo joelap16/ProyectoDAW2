@@ -1,0 +1,121 @@
+<h2>Mis Tickets Asignados</h2>
+
+<div class="filtros">
+
+  <label>Estado:</label>
+
+  <select [(ngModel)]="filtroEstado">
+
+    <option value="">Todos</option>
+
+    <option value="ABIERTO">
+      ABIERTO
+    </option>
+
+    <option value="EN_PROGRESO">
+      EN_PROGRESO
+    </option>
+
+    <option value="RESUELTO">
+      RESUELTO
+    </option>
+
+  </select>
+
+  <label>Categoría:</label>
+
+  <select [(ngModel)]="filtroCategoria">
+
+    <option value="">
+      Todas
+    </option>
+
+    <option
+      *ngFor="let categoria of categorias"
+      [value]="categoria.nombre">
+
+      {{ categoria.nombre }}
+
+    </option>
+
+  </select>
+
+  <button (click)="aplicarFiltros()">
+    Buscar
+  </button>
+
+  <button (click)="limpiarFiltros()">
+    Limpiar
+  </button>
+
+</div>
+
+<hr>
+
+<div *ngIf="cargando">
+
+  Cargando tickets...
+
+</div>
+
+<div *ngIf="error">
+
+  {{ error }}
+
+</div>
+
+<table
+  *ngIf="!cargando && tickets.length > 0"
+  border="1">
+
+  <thead>
+
+    <tr>
+
+      <th>ID</th>
+      <th>Título</th>
+      <th>Categoría</th>
+      <th>Estado</th>
+      <th>Usuario</th>
+      <th>Acciones</th>
+
+    </tr>
+
+  </thead>
+
+  <tbody>
+
+    <tr *ngFor="let ticket of tickets">
+
+      <td>{{ ticket.id }}</td>
+
+      <td>{{ ticket.titulo }}</td>
+
+      <td>{{ ticket.categoria }}</td>
+
+      <td>{{ ticket.estado }}</td>
+
+      <td>{{ ticket.usuario }}</td>
+
+      <td>
+
+        <button
+          [routerLink]="['/tecnico/detalle-ticket', ticket.id]">
+
+          Ver detalle
+
+        </button>
+
+      </td>
+
+    </tr>
+
+  </tbody>
+
+</table>
+
+<div *ngIf="!cargando && tickets.length === 0">
+
+  No tienes tickets asignados.
+
+</div>
