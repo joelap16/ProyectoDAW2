@@ -16,6 +16,7 @@ import { UsuarioLayout } from './layouts/usuario-layout/usuario-layout';
 import { ListaTickets } from './pages/admin/lista-tickets/lista-tickets';
 
 import { TecnicosAdmin } from './pages/admin/tecnicos-admin/tecnicos-admin';
+import { ReportesComponent } from './pages/admin/reportes/reportes';
 
 import { UsuariosAdmin } from './pages/admin/usuarios-admin/usuarios-admin';
 
@@ -55,6 +56,11 @@ export const routes: Routes = [
       {
         path: 'usuarios',
         component: UsuariosAdmin
+      },
+
+      {
+        path: 'reportes',
+        component: ReportesComponent
       }
     ]
     

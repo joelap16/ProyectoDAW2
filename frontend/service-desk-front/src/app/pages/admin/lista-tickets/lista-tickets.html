@@ -1,95 +1,72 @@
-<h2>Lista de Tickets</h2>
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+  <h2 style="color:#1e3a5f">Gestión de Tickets</h2>
+  <span style="color:#888; font-size:0.9rem">Total: {{ tickets.length }}</span>
+</div>
 
-Cantidad de tickets: {{ tickets.length }}
+<div class="loading-msg" *ngIf="cargando">Cargando tickets...</div>
 
-<table border="1">
-
-    <tr>
-
+<div class="card" *ngIf="!cargando">
+  <table class="data-table">
+    <thead>
+      <tr>
         <th>ID</th>
         <th>Título</th>
         <th>Categoría</th>
         <th>Estado</th>
         <th>Usuario</th>
-        <th>Técnico Actual</th>
-        <th>Reasignar Técnico</th>
+        <th>Técnico actual</th>
+        <th>Reasignar técnico</th>
         <th>Acciones</th>
-
-    </tr>
-
-    @for (ticket of tickets; track ticket.id) {
-
+      </tr>
+    </thead>
+    <tbody>
+      @for (ticket of tickets; track ticket.id) {
         <tr>
-
-            <td>{{ ticket.id }}</td>
-
-            <td>{{ ticket.titulo }}</td>
-
-            <td>{{ ticket.categoria }}</td>
-
-            <td>
-
-                <select
-                    [ngModel]="ticket.estado"
-                    (ngModelChange)="cambiarEstado(ticket, $event)"
-                    name="estado-{{ ticket.id }}">
-
-                    @for (estado of estadosPermitidos(ticket.estado); track estado) {
-
-                        <option [ngValue]="estado">
-                            {{ estado }}
-                        </option>
-
-                    }
-
-                </select>
-
-            </td>
-
-            <td>{{ ticket.usuario }}</td>
-
-            <td>{{ ticket.tecnico }}</td>
-
-            <td>
-
-                <select #tecnicoSelect>
-
-                    <option selected disabled>
-                        Seleccione un técnico
-                    </option>
-
-                    @for (tecnico of tecnicos; track tecnico.id) {
-
-                        <option [value]="tecnico.id">
-
-                            {{ tecnico.nombreCompleto }}
-                            - {{ tecnico.categoria }}
-
-                        </option>
-
-                    }
-
-                </select>
-
-                <button
-                    (click)="asignarTecnico(ticket, +tecnicoSelect.value)">
-
-                    Asignar
-
-                </button>
-
-            </td>
-
-            <td>
-
-                <button (click)="eliminarTicket(ticket.id)">
-                    Eliminar
-                </button>
-
-            </td>
-
+          <td>#{{ ticket.id }}</td>
+          <td>{{ ticket.titulo }}</td>
+          <td>{{ ticket.categoria }}</td>
+          <td>
+            <select class="form-control" style="width:auto; padding:5px 8px; font-size:0.85rem"
+              [ngModel]="ticket.estado"
+              (ngModelChange)="cambiarEstado(ticket, $event)"
+              name="estado-{{ ticket.id }}">
+              @for (estado of estadosPermitidos(ticket.estado); track estado) {
+                <option [ngValue]="estado">{{ estado }}</option>
+              }
+            </select>
+          </td>
+          <td>{{ ticket.usuario }}</td>
+          <td>
+            <span class="badge"
+              [class.badge-abierto]="!ticket.tecnico"
+              [style.background]="ticket.tecnico ? '#e3fbe8' : ''"
+              [style.color]="ticket.tecnico ? '#1a8a3e' : ''">
+              {{ ticket.tecnico || 'Sin asignar' }}
+            </span>
+          </td>
+          <td>
+            <div style="display:flex; gap:6px; align-items:center">
+              <select class="form-control" style="width:auto; padding:5px 8px; font-size:0.85rem" #tecnicoSelect>
+                <option value="" disabled selected>Seleccione técnico</option>
+                @for (tecnico of tecnicos; track tecnico.id) {
+                  <option [value]="tecnico.id">
+                    {{ tecnico.nombreCompleto }} — {{ tecnico.categoria }}
+                  </option>
+                }
+              </select>
+              <button class="btn btn-primary btn-sm" (click)="asignarTecnico(ticket, +tecnicoSelect.value)">
+                Asignar
+              </button>
+            </div>
+          </td>
+          <td>
+            <button class="btn btn-danger btn-sm" (click)="eliminarTicket(ticket.id)">
+              Eliminar
+            </button>
+          </td>
         </tr>
-
-    }
-
-</table>
+      }
+    </tbody>
+  </table>
+  <div class="empty-msg" *ngIf="tickets.length === 0">No hay tickets registrados.</div>
+</div>

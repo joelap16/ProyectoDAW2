@@ -1,1 +1,77 @@
-<p>Dashboard usuario</p>
+<h2 style="margin-bottom:24px; color:#1e3a5f">Mi Panel</h2>
+
+<div class="stats-grid">
+  <div class="stat-card with-icon">
+    <div class="stat-icon icon-total">🎫</div>
+    <div>
+      <div class="stat-number">{{ total }}</div>
+      <div class="stat-label">Total Tickets</div>
+    </div>
+  </div>
+  <div class="stat-card with-icon">
+    <div class="stat-icon icon-abierto">🟦</div>
+    <div>
+      <div class="stat-number" style="color:#1a6fc4">{{ abiertos }}</div>
+      <div class="stat-label">Abiertos</div>
+    </div>
+  </div>
+  <div class="stat-card with-icon">
+    <div class="stat-icon icon-progreso">🟧</div>
+    <div>
+      <div class="stat-number" style="color:#c47a00">{{ enProgreso }}</div>
+      <div class="stat-label">En Progreso</div>
+    </div>
+  </div>
+  <div class="stat-card with-icon">
+    <div class="stat-icon icon-resuelto">✅</div>
+    <div>
+      <div class="stat-number" style="color:#1a8a3e">{{ resueltos }}</div>
+      <div class="stat-label">Resueltos</div>
+    </div>
+  </div>
+</div>
+
+<div class="charts-row">
+
+  <div class="card chart-card">
+    <h3>Distribución de mis tickets</h3>
+    <div class="donut-wrap">
+      <div class="donut" [style.background]="donutGradient">
+        <div class="donut-center">
+          <div class="donut-total">{{ total }}</div>
+          <div class="donut-label">Tickets</div>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item" *ngFor="let e of estadosLegend">
+          <span class="legend-dot" [style.background]="e.color"></span>
+          {{ e.label }} <span class="legend-value">{{ e.value }} ({{ e.pct }}%)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card chart-card">
+    <h3>Tickets recientes</h3>
+    <div class="bar-list" *ngIf="ultimosTickets.length > 0">
+      <div class="bar-row" *ngFor="let t of ultimosTickets">
+        <div class="bar-row-top">
+          <span>{{ t.titulo }}</span>
+          <span class="badge"
+            [class.badge-abierto]="t.estado === 'ABIERTO'"
+            [class.badge-progreso]="t.estado === 'EN_PROGRESO'"
+            [class.badge-resuelto]="t.estado === 'RESUELTO'">
+            {{ t.estado }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="empty-msg" *ngIf="ultimosTickets.length === 0">Aún no has creado tickets.</div>
+  </div>
+
+</div>
+
+<div style="display:flex; gap:16px; margin-top:8px">
+  <a routerLink="/usuario/crear-ticket" class="btn btn-primary">+ Crear nuevo ticket</a>
+  <a routerLink="/usuario/mis-tickets" class="btn btn-secondary">Ver mis tickets</a>
+</div>

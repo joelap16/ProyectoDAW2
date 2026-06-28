@@ -1,121 +1,58 @@
-<h2>Mis Tickets Asignados</h2>
+<h2 style="color:#1e3a5f; margin-bottom:20px">Mis Tickets Asignados</h2>
 
 <div class="filtros">
-
   <label>Estado:</label>
-
-  <select [(ngModel)]="filtroEstado">
-
+  <select class="form-control" style="width:auto" [(ngModel)]="filtroEstado">
     <option value="">Todos</option>
-
-    <option value="ABIERTO">
-      ABIERTO
-    </option>
-
-    <option value="EN_PROGRESO">
-      EN_PROGRESO
-    </option>
-
-    <option value="RESUELTO">
-      RESUELTO
-    </option>
-
+    <option value="ABIERTO">ABIERTO</option>
+    <option value="EN_PROGRESO">EN_PROGRESO</option>
+    <option value="RESUELTO">RESUELTO</option>
   </select>
 
   <label>Categoría:</label>
-
-  <select [(ngModel)]="filtroCategoria">
-
-    <option value="">
-      Todas
-    </option>
-
-    <option
-      *ngFor="let categoria of categorias"
-      [value]="categoria.nombre">
-
+  <select class="form-control" style="width:auto" [(ngModel)]="filtroCategoria">
+    <option value="">Todas</option>
+    <option *ngFor="let categoria of categorias" [value]="categoria.nombre">
       {{ categoria.nombre }}
-
     </option>
-
   </select>
 
-  <button (click)="aplicarFiltros()">
-    Buscar
-  </button>
-
-  <button (click)="limpiarFiltros()">
-    Limpiar
-  </button>
-
+  <button class="btn btn-primary btn-sm" (click)="aplicarFiltros()">Buscar</button>
+  <button class="btn btn-secondary btn-sm" (click)="limpiarFiltros()">Limpiar</button>
 </div>
 
-<hr>
+<div class="loading-msg" *ngIf="cargando">Cargando tickets...</div>
+<div class="alert alert-error" *ngIf="error">{{ error }}</div>
 
-<div *ngIf="cargando">
-
-  Cargando tickets...
-
-</div>
-
-<div *ngIf="error">
-
-  {{ error }}
-
-</div>
-
-<table
-  *ngIf="!cargando && tickets.length > 0"
-  border="1">
-
-  <thead>
-
-    <tr>
-
-      <th>ID</th>
-      <th>Título</th>
-      <th>Categoría</th>
-      <th>Estado</th>
-      <th>Usuario</th>
-      <th>Acciones</th>
-
-    </tr>
-
-  </thead>
-
-  <tbody>
-
-    <tr *ngFor="let ticket of tickets">
-
-      <td>{{ ticket.id }}</td>
-
-      <td>{{ ticket.titulo }}</td>
-
-      <td>{{ ticket.categoria }}</td>
-
-      <td>{{ ticket.estado }}</td>
-
-      <td>{{ ticket.usuario }}</td>
-
-      <td>
-
-        <button
-          [routerLink]="['/tecnico/detalle-ticket', ticket.id]">
-
-          Ver detalle
-
-        </button>
-
-      </td>
-
-    </tr>
-
-  </tbody>
-
-</table>
-
-<div *ngIf="!cargando && tickets.length === 0">
-
-  No tienes tickets asignados.
-
+<div class="card" *ngIf="!cargando">
+  <table class="data-table" *ngIf="tickets.length > 0">
+    <thead>
+      <tr>
+        <th>ID</th><th>Título</th><th>Categoría</th><th>Estado</th><th>Usuario</th><th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ticket of tickets">
+        <td>#{{ ticket.id }}</td>
+        <td>{{ ticket.titulo }}</td>
+        <td>{{ ticket.categoria }}</td>
+        <td>
+          <span class="badge"
+            [class.badge-abierto]="ticket.estado === 'ABIERTO'"
+            [class.badge-progreso]="ticket.estado === 'EN_PROGRESO'"
+            [class.badge-resuelto]="ticket.estado === 'RESUELTO'">
+            {{ ticket.estado }}
+          </span>
+        </td>
+        <td>{{ ticket.usuario }}</td>
+        <td>
+          <button class="btn btn-primary btn-sm"
+            [routerLink]="['/tecnico/detalle-ticket', ticket.id]">
+            Ver detalle
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="empty-msg" *ngIf="tickets.length === 0">No tienes tickets asignados con los filtros seleccionados.</div>
 </div>

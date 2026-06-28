@@ -18,8 +18,8 @@ import { Categoria } from '../../../model/categoria/categoria';
 export class TecnicosAdmin implements OnInit {
 
   tecnicos: Tecnico[] = [];
-
   categorias: Categoria[] = [];
+  cargando: boolean = false; // <-- CORRECCIÓN: Variable añadida para el HTML
 
   constructor(
     private tecnicoService: TecnicoService,
@@ -28,88 +28,55 @@ export class TecnicosAdmin implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
     this.cargarTecnicos();
-
     this.cargarCategorias();
-
   }
 
   cargarTecnicos(): void {
-
+    this.cargando = true; // <-- Activamos la carga para mostrar el mensaje
     this.tecnicoService.obtenerTecnicos()
-
       .subscribe({
-
         next: (data) => {
-
           this.tecnicos = data;
-
+          this.cargando = false; // <-- Desactivamos al terminar con éxito
           this.cdr.detectChanges();
-
         },
-
         error: (err) => {
-
+          this.cargando = false; // <-- Desactivamos si ocurre un error
           console.error(err);
-
         }
-
       });
-
   }
 
   cargarCategorias(): void {
-
     this.categoriaService.obtenerCategorias()
-
       .subscribe({
-
         next: (data) => {
-
           this.categorias = data;
-
           this.cdr.detectChanges();
-
         },
-
         error: (err) => {
-
           console.error(err);
-
         }
-
       });
-
   }
 
   asignarCategoria(
     tecnicoId: number,
     categoriaId: number
   ): void {
-
     this.tecnicoService
       .asignarCategoria(tecnicoId, categoriaId)
-
       .subscribe({
-
         next: () => {
-
           // Recargar tabla
           this.cargarTecnicos();
-
           this.cdr.detectChanges();
-
         },
-
         error: (err) => {
-
           console.error(err);
-
         }
-
       });
-
   }
 
 }

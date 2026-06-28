@@ -1,31 +1,25 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
-
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './admin-layout.html',
   styleUrl: './admin-layout.scss'
 })
+export class AdminLayout implements OnInit {
+  usuarioActual: string = '';
+  inicial: string = '';
 
-export class AdminLayout {
+  constructor(private authService: AuthService, private router: Router) {}
 
-  constructor(
-
-    private authService: AuthService,
-    private router: Router
-
-  ) {}
-
-  cerrarSesion() {
-
-    this.authService.cerrarSesion()
-
-    this.router.navigate(['/auth/login']);
-
+  ngOnInit(): void {
+    const username = this.authService.getUsername();
+    this.usuarioActual = username || 'Administrador';
+    this.inicial = this.usuarioActual.charAt(0).toUpperCase();
   }
 
+  cerrarSesion() { this.authService.cerrarSesion(); this.router.navigate(['/auth/login']); }
 }

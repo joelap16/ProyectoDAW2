@@ -19,6 +19,7 @@ export class ListaTickets implements OnInit {
 
   tickets: Ticket[] = [];
   tecnicos: Tecnico[] = [];
+  cargando: boolean = false; // <-- CORRECCIÓN: Declaramos la variable que te pedía el HTML
 
   estados = ['ABIERTO', 'EN_PROGRESO', 'CERRADO'];
 
@@ -34,12 +35,17 @@ export class ListaTickets implements OnInit {
   }
 
   cargarTickets() {
+    this.cargando = true; // <-- Empieza a cargar, muestra el mensaje en el HTML
     this.ticketService.obtenerTicketsAdmin().subscribe({
       next: (data) => {
         this.tickets = data;
+        this.cargando = false; // <-- Terminó de cargar con éxito, oculta el mensaje
         this.cdr.detectChanges();
       },
-      error: (err) => console.error(err)
+      error: (err) => {
+        this.cargando = false; // <-- Si hay error, también ocultamos el mensaje
+        console.error(err);
+      }
     });
   }
 

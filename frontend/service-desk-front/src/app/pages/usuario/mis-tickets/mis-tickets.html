@@ -1,40 +1,44 @@
-<section class="tickets-card">
-  <div class="header">
-    <h2>Mis tickets</h2>
-    <button (click)="cargarTickets()">Recargar</button>
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+  <h2 style="color:#1e3a5f">Mis Tickets</h2>
+  <div style="display:flex; gap:10px">
+    <a class="btn btn-primary btn-sm" routerLink="/usuario/crear-ticket">+ Nuevo ticket</a>
+    <button class="btn btn-secondary btn-sm" (click)="cargarTickets()">↺ Recargar</button>
   </div>
+</div>
 
-  <p class="info">Aquí verás los tickets creados con tu usuario.</p>
+<div class="loading-msg" *ngIf="isLoading">Cargando tickets...</div>
+<div class="alert alert-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-
-  <div *ngIf="isLoading" class="loading">Cargando tickets...</div>
-
-  <div *ngIf="!isLoading && tickets.length === 0" class="empty">
-    Aún no tienes tickets registrados.
+<div class="card" *ngIf="!isLoading && tickets.length === 0 && !errorMessage">
+  <div class="empty-msg">
+    <p>Aún no tienes tickets registrados.</p>
+    <a routerLink="/usuario/crear-ticket" class="btn btn-primary" style="margin-top:12px">Crear mi primer ticket</a>
   </div>
+</div>
 
-  <table *ngIf="!isLoading && tickets.length > 0" class="tickets-table">
+<div class="card" *ngIf="!isLoading && tickets.length > 0">
+  <table class="data-table">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Título</th>
-        <th>Categoría</th>
-        <th>Estado</th>
-        <th>Técnico</th>
-        <th>Fecha</th>
+        <th>ID</th><th>Título</th><th>Categoría</th><th>Estado</th><th>Técnico</th><th>Fecha</th>
       </tr>
     </thead>
-
     <tbody>
       <tr *ngFor="let ticket of tickets; trackBy: trackByTicketId">
-        <td>{{ ticket.id }}</td>
+        <td>#{{ ticket.id }}</td>
         <td>{{ ticket.titulo }}</td>
         <td>{{ ticket.categoria }}</td>
-        <td>{{ ticket.estado }}</td>
-        <td>{{ ticket.tecnico }}</td>
-        <td>{{ ticket.fechaCreacion | date:'short' }}</td>
+        <td>
+          <span class="badge"
+            [class.badge-abierto]="ticket.estado === 'ABIERTO'"
+            [class.badge-progreso]="ticket.estado === 'EN_PROGRESO'"
+            [class.badge-resuelto]="ticket.estado === 'RESUELTO'">
+            {{ ticket.estado }}
+          </span>
+        </td>
+        <td>{{ ticket.tecnico || '—' }}</td>
+        <td>{{ ticket.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</td>
       </tr>
     </tbody>
   </table>
-</section>
+</div>

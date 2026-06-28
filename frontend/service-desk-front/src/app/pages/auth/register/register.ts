@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -27,7 +27,8 @@ export class Register implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -96,6 +97,8 @@ export class Register implements OnInit {
 
         this.form.reset();
 
+        this.cd.detectChanges();
+
         setTimeout(() => {
 
           this.router.navigate(['/auth/login']);
@@ -111,6 +114,8 @@ export class Register implements OnInit {
         this.error =
           err.error ||
           'No se pudo registrar el usuario.';
+
+        this.cd.detectChanges();
 
       }
 

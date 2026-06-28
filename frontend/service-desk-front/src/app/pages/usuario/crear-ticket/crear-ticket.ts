@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
 import { TicketService } from '../../../services/ticket/ticket-service';
+import { CategoriaService } from '../../../services/categoria/categoria-service';
 import { TicketCreate } from '../../../model/ticket/ticket-create';
+import { Categoria } from '../../../model/categoria/categoria';
 
 @Component({
   selector: 'app-crear-ticket',
@@ -13,36 +15,38 @@ import { TicketCreate } from '../../../model/ticket/ticket-create';
   templateUrl: './crear-ticket.html',
   styleUrl: './crear-ticket.scss'
 })
-export class CrearTicketComponent {
+export class CrearTicketComponent implements OnInit {
   isLoading = false;
   successMessage = '';
   errorMessage = '';
+  categorias: Categoria[] = [];
+  errorCategorias = false;
 
   form: any;
 
   constructor(
     private fb: FormBuilder,
     private ticketService: TicketService,
+    private categoriaService: CategoriaService,
     private router: Router
   ) {
     this.form = this.fb.group({
       titulo: ['', [Validators.required, Validators.maxLength(100)]],
       descripcion: ['', [Validators.required, Validators.maxLength(500)]],
-      categoriaId: [null, [Validators.required, Validators.min(1)]]
+      categoriaId: [null, [Validators.required]]
     });
   }
 
-  get titulo() {
-    return this.form.get('titulo');
+  ngOnInit(): void {
+    this.categoriaService.obtenerCategorias().subscribe({
+      next: (data) => { this.categorias = data; },
+      error: () => { this.errorCategorias = true; }
+    });
   }
 
-  get descripcion() {
-    return this.form.get('descripcion');
-  }
-
-  get categoriaId() {
-    return this.form.get('categoriaId');
-  }
+  get titulo() { return this.form.get('titulo'); }
+  get descripcion() { return this.form.get('descripcion'); }
+  get categoriaId() { return this.form.get('categoriaId'); }
 
   enviar(): void {
     this.successMessage = '';
@@ -64,18 +68,13 @@ export class CrearTicketComponent {
     this.ticketService.crearTicketUsuario(payload).subscribe({
       next: () => {
         this.isLoading = false;
-        this.successMessage = 'Ticket creado correctamente.';
+        this.successMessage = '✅ Ticket creado correctamente. Redirigiendo...';
         this.form.reset();
-
-        setTimeout(() => {
-          this.router.navigate(['/usuario/mis-tickets']);
-        }, 1200);
+        setTimeout(() => { this.router.navigate(['/usuario/mis-tickets']); }, 1500);
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage =
-          err?.error?.message ||
-          'No se pudo crear el ticket. Verifica los datos e intenta nuevamente.';
+        this.errorMessage = err?.error?.message || 'No se pudo crear el ticket. Intenta nuevamente.';
       }
     });
   }

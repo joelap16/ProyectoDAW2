@@ -1,1 +1,115 @@
-<p>Dashboard admin</p>
+<h2 style="margin-bottom:24px; color:#1e3a5f">Panel de Administración</h2>
+
+<!-- TARJETAS DE ESTADÍSTICAS -->
+<div class="stats-grid">
+  <div class="stat-card with-icon">
+    <div class="stat-icon icon-total">🎫</div>
+    <div>
+      <div class="stat-number">{{ totalTickets }}</div>
+      <div class="stat-label">Total Tickets</div>
+    </div>
+  </div>
+  <div class="stat-card with-icon">
+    <div class="stat-icon icon-abierto">🟦</div>
+    <div>
+      <div class="stat-number" style="color:#1a6fc4">{{ abiertos }}</div>
+      <div class="stat-label">Abiertos</div>
+    </div>
+  </div>
+  <div class="stat-card with-icon">
+    <div class="stat-icon icon-progreso">🟧</div>
+    <div>
+      <div class="stat-number" style="color:#c47a00">{{ enProgreso }}</div>
+      <div class="stat-label">En Progreso</div>
+    </div>
+  </div>
+  <div class="stat-card with-icon">
+    <div class="stat-icon icon-resuelto">✅</div>
+    <div>
+      <div class="stat-number" style="color:#1a8a3e">{{ resueltos }}</div>
+      <div class="stat-label">Resueltos</div>
+    </div>
+  </div>
+  <div class="stat-card with-icon">
+    <div class="stat-icon icon-people">👥</div>
+    <div>
+      <div class="stat-number">{{ totalUsuarios }}</div>
+      <div class="stat-label">Usuarios</div>
+    </div>
+  </div>
+  <div class="stat-card with-icon">
+    <div class="stat-icon icon-people">🔧</div>
+    <div>
+      <div class="stat-number">{{ totalTecnicos }}</div>
+      <div class="stat-label">Técnicos</div>
+    </div>
+  </div>
+</div>
+
+<!-- GRÁFICOS -->
+<div class="charts-row">
+
+  <div class="card chart-card">
+    <h3>Distribución de tickets por estado</h3>
+    <div class="donut-wrap">
+      <div class="donut" [style.background]="donutGradient">
+        <div class="donut-center">
+          <div class="donut-total">{{ totalTickets }}</div>
+          <div class="donut-label">Tickets</div>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-item" *ngFor="let e of estadosLegend">
+          <span class="legend-dot" [style.background]="e.color"></span>
+          {{ e.label }} <span class="legend-value">{{ e.value }} ({{ e.pct }}%)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card chart-card">
+    <h3>Tickets por categoría</h3>
+    <div class="bar-list" *ngIf="categorias.length > 0">
+      <div class="bar-row" *ngFor="let c of categorias">
+        <div class="bar-row-top">
+          <span>{{ c.nombre }}</span>
+          <strong>{{ c.count }}</strong>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" [style.width.%]="c.pct"></div>
+        </div>
+      </div>
+    </div>
+    <div class="empty-msg" *ngIf="categorias.length === 0">No hay datos de categorías aún.</div>
+  </div>
+
+</div>
+
+<!-- TABLA DE TICKETS RECIENTES -->
+<div class="card">
+  <h3 style="margin-bottom:16px; color:#1e3a5f">Tickets recientes</h3>
+  <table class="data-table" *ngIf="ultimosTickets.length > 0">
+    <thead>
+      <tr>
+        <th>ID</th><th>Título</th><th>Categoría</th><th>Estado</th><th>Técnico</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let t of ultimosTickets">
+        <td>{{ t.id }}</td>
+        <td>{{ t.titulo }}</td>
+        <td>{{ t.categoria }}</td>
+        <td>
+          <span class="badge"
+            [class.badge-abierto]="t.estado === 'ABIERTO'"
+            [class.badge-progreso]="t.estado === 'EN_PROGRESO'"
+            [class.badge-resuelto]="t.estado === 'RESUELTO'">
+            {{ t.estado }}
+          </span>
+        </td>
+        <td>{{ t.tecnico || '—' }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="empty-msg" *ngIf="ultimosTickets.length === 0">No hay tickets aún.</div>
+</div>

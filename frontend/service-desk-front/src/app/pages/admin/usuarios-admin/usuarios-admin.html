@@ -1,53 +1,52 @@
-<h2>Lista de Usuarios</h2>
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+  <h2 style="color:#1e3a5f">Gestión de Usuarios</h2>
+  <span style="color:#888; font-size:0.9rem">Total: {{ usuarios.length }}</span>
+</div>
 
-Cantidad de usuarios: {{ usuarios.length }}
+<div class="loading-msg" *ngIf="cargando">Cargando usuarios...</div>
 
-<table border="1">
-  <tr>
-    <th>ID</th>
-    <th>Nombre</th>
-    <th>Apellido</th>
-    <th>Email</th>
-    <th>Rol</th>
-    <th>Editar</th>
-  </tr>
-
-  @for (usuario of usuarios; track usuario.id) {
-    <tr>
-      <td>{{ usuario.id }}</td>
-
-      <td>
-        @if (esEditando(usuario)) {
-          <input
-            [(ngModel)]="usuarioEditando!.nombre"
-            name="nombre-{{ usuario.id }}">
-        } @else {
-          {{ usuario.nombre }}
-        }
-      </td>
-
-      <td>
-        @if (esEditando(usuario)) {
-          <input
-            [(ngModel)]="usuarioEditando!.apellido"
-            name="apellido-{{ usuario.id }}">
-        } @else {
-          {{ usuario.apellido }}
-        }
-      </td>
-
-      <td>{{ usuario.email }}</td>
-
-      <td>{{ usuario.rol }}</td>
-
-      <td>
-        @if (!esEditando(usuario)) {
-          <button (click)="editarUsuario(usuario)">Editar</button>
-        } @else {
-          <button (click)="guardarCambios()">Guardar</button>
-          <button (click)="cancelarEdicion()">Cancelar</button>
-        }
-      </td>
-    </tr>
-  }
-</table>
+<div class="card" *ngIf="!cargando">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>ID</th><th>Nombre</th><th>Apellido</th><th>Email</th><th>Rol</th><th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (usuario of usuarios; track usuario.id) {
+        <tr>
+          <td>#{{ usuario.id }}</td>
+          <td>
+            @if (esEditando(usuario)) {
+              <input class="form-control" style="padding:5px 8px; font-size:0.88rem"
+                [(ngModel)]="usuarioEditando!.nombre" name="nombre-{{ usuario.id }}">
+            } @else {
+              {{ usuario.nombre }}
+            }
+          </td>
+          <td>
+            @if (esEditando(usuario)) {
+              <input class="form-control" style="padding:5px 8px; font-size:0.88rem"
+                [(ngModel)]="usuarioEditando!.apellido" name="apellido-{{ usuario.id }}">
+            } @else {
+              {{ usuario.apellido }}
+            }
+          </td>
+          <td>{{ usuario.email }}</td>
+          <td>
+            <span class="badge badge-abierto">{{ usuario.rol }}</span>
+          </td>
+          <td>
+            @if (!esEditando(usuario)) {
+              <button class="btn btn-warning btn-sm" (click)="editarUsuario(usuario)">Editar</button>
+            } @else {
+              <button class="btn btn-success btn-sm" (click)="guardarCambios()" style="margin-right:6px">Guardar</button>
+              <button class="btn btn-secondary btn-sm" (click)="cancelarEdicion()">Cancelar</button>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  <div class="empty-msg" *ngIf="usuarios.length === 0">No hay usuarios registrados.</div>
+</div>

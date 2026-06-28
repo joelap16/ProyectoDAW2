@@ -1,36 +1,27 @@
-<h2>Iniciar Sesión</h2>
+<div class="auth-page">
+  <div class="auth-card">
+    <h2>Iniciar Sesión</h2>
 
-<form [formGroup]="loginForm" (ngSubmit)="iniciarSesion()">
+    <form [formGroup]="loginForm" (ngSubmit)="iniciarSesion()">
+      <div class="form-group">
+        <label>Usuario (correo)</label>
+        <input class="form-control" type="text" formControlName="username" placeholder="correo@ejemplo.com">
+      </div>
 
-  <div>
-    <label>Usuario</label>
-    <input
-      type="text"
-      formControlName="username">
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input class="form-control" type="password" formControlName="password" placeholder="••••••">
+      </div>
+
+      <div *ngIf="errorMsg" class="alert alert-error">{{ errorMsg }}</div>
+
+      <button class="btn btn-primary" style="width:100%; margin-top:8px" type="submit" [disabled]="cargando">
+        {{ cargando ? 'Ingresando...' : 'Ingresar' }}
+      </button>
+    </form>
+
+    <div class="auth-link">
+      ¿No tienes cuenta? <a routerLink="/auth/register">Regístrate aquí</a>
+    </div>
   </div>
-
-  <br>
-
-  <div>
-    <label>Contraseña</label>
-    <input
-      type="password"
-      formControlName="password">
-  </div>
-
-  <br>
-
-  <button type="submit">
-    Ingresar
-  </button>
-
-</form>
-
-<br>
-
-<p>
-  ¿No tienes una cuenta?
-</p>
-<a routerLink="/auth/register">
-    Regístrate aquí
-</a>
+</div>

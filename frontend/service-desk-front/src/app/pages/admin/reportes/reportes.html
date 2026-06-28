@@ -1,0 +1,151 @@
+<h2 style="color:#1e3a5f; margin-bottom:8px">Reportes</h2>
+<p style="color:#666; margin-bottom:24px">Genera reportes del sistema y exporta en PDF o Excel.</p>
+
+<!-- FILTROS -->
+<div class="card" style="margin-bottom:20px">
+  <h3 style="color:#1e3a5f; margin-bottom:16px">Filtros</h3>
+  <div style="display:flex; gap:24px; flex-wrap:wrap; align-items:flex-end">
+    <div class="form-group" style="margin-bottom:0; min-width:180px">
+      <label>Estado</label>
+      <select class="form-control" [(ngModel)]="filtroEstado">
+        <option value="">Todos</option>
+        <option value="ABIERTO">ABIERTO</option>
+        <option value="EN_PROGRESO">EN PROGRESO</option>
+        <option value="RESUELTO">RESUELTO</option>
+      </select>
+    </div>
+    <div class="form-group" style="margin-bottom:0; min-width:180px">
+      <label>Categoría</label>
+      <select class="form-control" [(ngModel)]="filtroCategoria">
+        <option value="">Todas</option>
+        <option *ngFor="let c of categorias" [value]="c.nombre">{{ c.nombre }}</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" (click)="aplicarFiltros()">Aplicar filtros</button>
+    <button class="btn btn-secondary" (click)="limpiarFiltros()">Limpiar</button>
+  </div>
+</div>
+
+<div class="loading-msg" *ngIf="cargando">Cargando datos...</div>
+
+<ng-container *ngIf="!cargando">
+
+  <!-- RESUMEN ESTADÍSTICO -->
+  <div class="card" style="margin-bottom:20px">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+      <h3 style="color:#1e3a5f">Resumen estadístico</h3>
+      <div style="display:flex; gap:8px">
+        <button class="btn btn-danger btn-sm" (click)="exportarResumenPDF()">📄 PDF</button>
+        <button class="btn btn-success btn-sm" (click)="exportarResumenExcel()">📊 Excel</button>
+      </div>
+    </div>
+
+    <div class="stats-grid" style="margin-bottom:20px">
+      <div class="stat-card">
+        <div class="stat-number">{{ ticketsFiltrados.length }}</div>
+        <div class="stat-label">Total tickets</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" style="color:#1a6fc4">{{ contarPorEstado('ABIERTO') }}</div>
+        <div class="stat-label">Abiertos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" style="color:#c47a00">{{ contarPorEstado('EN_PROGRESO') }}</div>
+        <div class="stat-label">En progreso</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" style="color:#1a8a3e">{{ contarPorEstado('RESUELTO') }}</div>
+        <div class="stat-label">Resueltos</div>
+      </div>
+    </div>
+
+    <h4 style="color:#444; margin-bottom:10px">Por categoría</h4>
+    <table class="data-table">
+      <thead>
+        <tr><th>Categoría</th><th>Total</th><th>Abiertos</th><th>En Progreso</th><th>Resueltos</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let fila of resumenPorCategoria">
+          <td>{{ fila.categoria }}</td>
+          <td><strong>{{ fila.total }}</strong></td>
+          <td><span class="badge badge-abierto">{{ fila.abiertos }}</span></td>
+          <td><span class="badge badge-progreso">{{ fila.enProgreso }}</span></td>
+          <td><span class="badge badge-resuelto">{{ fila.resueltos }}</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CARGA POR TÉCNICO -->
+  <div class="card" style="margin-bottom:20px">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+      <h3 style="color:#1e3a5f">Carga de trabajo por técnico</h3>
+      <div style="display:flex; gap:8px">
+        <button class="btn btn-danger btn-sm" (click)="exportarTecnicosPDF()">📄 PDF</button>
+        <button class="btn btn-success btn-sm" (click)="exportarTecnicosExcel()">📊 Excel</button>
+      </div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr><th>Técnico</th><th>Categoría</th><th>Total</th><th>Abiertos</th><th>En Progreso</th><th>Resueltos</th><th>Carga</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let t of cargaTecnicos">
+          <td>{{ t.nombre }}</td>
+          <td>{{ t.categoria }}</td>
+          <td><strong>{{ t.total }}</strong></td>
+          <td><span class="badge badge-abierto">{{ t.abiertos }}</span></td>
+          <td><span class="badge badge-progreso">{{ t.enProgreso }}</span></td>
+          <td><span class="badge badge-resuelto">{{ t.resueltos }}</span></td>
+          <td>
+            <div style="background:#eee; border-radius:8px; height:10px; min-width:80px; overflow:hidden">
+              <div [style.width.%]="barraProgreso(t.total)" [style.background]="colorBarra(t.total)"
+                style="height:100%; border-radius:8px; transition:width 0.4s"></div>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="cargaTecnicos.length === 0">
+          <td colspan="7" class="empty-msg">Sin datos.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- LISTADO COMPLETO DE TICKETS -->
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+      <h3 style="color:#1e3a5f">Listado de tickets <span style="font-size:0.85rem; color:#888; font-weight:400">({{ ticketsFiltrados.length }} registros)</span></h3>
+      <div style="display:flex; gap:8px">
+        <button class="btn btn-danger btn-sm" (click)="exportarTicketsPDF()">📄 PDF</button>
+        <button class="btn btn-success btn-sm" (click)="exportarTicketsExcel()">📊 Excel</button>
+      </div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr><th>ID</th><th>Título</th><th>Categoría</th><th>Estado</th><th>Usuario</th><th>Técnico</th><th>Fecha</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ticket of ticketsFiltrados">
+          <td>#{{ ticket.id }}</td>
+          <td>{{ ticket.titulo }}</td>
+          <td>{{ ticket.categoria }}</td>
+          <td>
+            <span class="badge"
+              [class.badge-abierto]="ticket.estado === 'ABIERTO'"
+              [class.badge-progreso]="ticket.estado === 'EN_PROGRESO'"
+              [class.badge-resuelto]="ticket.estado === 'RESUELTO'">
+              {{ ticket.estado }}
+            </span>
+          </td>
+          <td>{{ ticket.usuario }}</td>
+          <td>{{ ticket.tecnico || '—' }}</td>
+          <td>{{ ticket.fechaCreacion | date:'dd/MM/yyyy' }}</td>
+        </tr>
+        <tr *ngIf="ticketsFiltrados.length === 0">
+          <td colspan="7" class="empty-msg">No hay tickets con los filtros seleccionados.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</ng-container>

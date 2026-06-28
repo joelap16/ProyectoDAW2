@@ -1,21 +1,21 @@
-<h2>Panel Usuario</h2>
-
-<button (click)="cerrarSesion()">
-    Cerrar sesión
-</button>
-
-<hr>
-
-<nav>
-
-<a routerLink="/usuario/dashboard">Dashboard</a> |
-
-<a routerLink="/usuario/mis-tickets">Mis Tickets</a> |
-
-<a routerLink="/usuario/crear-ticket">Crear Nuevo Ticket</a>
-
-</nav>
-
-<hr>
-
-<router-outlet></router-outlet>
+<div class="layout-wrapper">
+  <header class="layout-header">
+    <h1>🎫 Service Desk — Usuario</h1>
+    <nav>
+      <a routerLink="/usuario/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/usuario/mis-tickets" routerLinkActive="active">Mis Tickets</a>
+      <a routerLink="/usuario/crear-ticket" routerLinkActive="active">Crear Ticket</a>
+    </nav>
+    <div class="user-info">
+      <span class="user-avatar">{{ inicial }}</span>
+      <div class="user-text">
+        <span class="user-name">{{ usuarioActual }}</span>
+        <span class="user-role">Usuario</span>
+      </div>
+    </div>
+    <button class="btn-logout" (click)="cerrarSesion()">Cerrar sesión</button>
+  </header>
+  <main class="layout-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

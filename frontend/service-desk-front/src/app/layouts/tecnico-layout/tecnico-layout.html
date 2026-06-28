@@ -1,21 +1,20 @@
-<h2>Panel Técnico</h2>
-
-<button (click)="cerrarSesion()">
-    Cerrar sesión
-</button>
-
-<hr>
-
-<nav>
-
-<a routerLink="/tecnico/dashboard">Dashboard</a> |
-
-<a routerLink="/tecnico/mis-tickets-tecnico">Mis Tickets</a> |
-
-<a routerLink="/tecnico/perfil-tecnico">Perfil</a>
-
-</nav>
-
-<hr>
-
-<router-outlet></router-outlet>
+<div class="layout-wrapper">
+  <header class="layout-header">
+    <h1>🔧 Service Desk — Técnico</h1>
+    <nav>
+      <a routerLink="/tecnico/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/tecnico/mis-tickets-tecnico" routerLinkActive="active">Mis Tickets</a>
+    </nav>
+    <div class="user-info">
+      <span class="user-avatar">{{ inicial }}</span>
+      <div class="user-text">
+        <span class="user-name">{{ usuarioActual }}</span>
+        <span class="user-role">Técnico</span>
+      </div>
+    </div>
+    <button class="btn-logout" (click)="cerrarSesion()">Cerrar sesión</button>
+  </header>
+  <main class="layout-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

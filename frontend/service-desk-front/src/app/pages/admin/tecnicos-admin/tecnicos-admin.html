@@ -1,67 +1,47 @@
-<h2>Lista de Técnicos</h2>
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+  <h2 style="color:#1e3a5f">Gestión de Técnicos</h2>
+  <span style="color:#888; font-size:0.9rem">Total: {{ tecnicos.length }}</span>
+</div>
 
-Cantidad de técnicos: {{ tecnicos.length }}
+<div class="loading-msg" *ngIf="cargando">Cargando técnicos...</div>
 
-<table border="1">
-
-    <tr>
-
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Email</th>
-        <th>Categoría actual</th>
-        <th>Asignar categoría</th>
-
-    </tr>
-
-    @for (tecnico of tecnicos; track tecnico.id) {
-
+<div class="card" *ngIf="!cargando">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>ID</th><th>Nombre</th><th>Email</th><th>Categoría actual</th><th>Asignar categoría</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (tecnico of tecnicos; track tecnico.id) {
         <tr>
-
-            <td>{{ tecnico.id }}</td>
-
-            <td>{{ tecnico.nombreCompleto }}</td>
-
-            <td>{{ tecnico.email }}</td>
-
-            <td>{{ tecnico.categoria }}</td>
-
-            <td>
-
-                <select #categoriaSelect>
-
-                    <option selected disabled>
-
-                        Seleccione categoría
-
-                    </option>
-
-                    @for (categoria of categorias; track categoria.id) {
-
-                        <option [value]="categoria.id">
-
-                            {{ categoria.nombre }}
-
-                        </option>
-
-                    }
-
-                </select>
-
-                <button
-                    (click)="asignarCategoria(
-                        tecnico.id,
-                        +categoriaSelect.value
-                    )">
-
-                    Asignar
-
-                </button>
-
-            </td>
-
+          <td>#{{ tecnico.id }}</td>
+          <td>{{ tecnico.nombreCompleto }}</td>
+          <td>{{ tecnico.email }}</td>
+          <td>
+            <span class="badge"
+              [class.badge-resuelto]="tecnico.categoria !== 'SIN CATEGORIA'"
+              [class.badge-abierto]="tecnico.categoria === 'SIN CATEGORIA'">
+              {{ tecnico.categoria }}
+            </span>
+          </td>
+          <td>
+            <div style="display:flex; gap:6px; align-items:center">
+              <select class="form-control" style="width:auto; padding:5px 8px; font-size:0.85rem" #categoriaSelect>
+                <option value="" disabled selected>Selecciona categoría</option>
+                @for (categoria of categorias; track categoria.id) {
+                  <option [value]="categoria.id">{{ categoria.nombre }}</option>
+                }
+              </select>
+              <button class="btn btn-primary btn-sm"
+                (click)="asignarCategoria(tecnico.id, +categoriaSelect.value)">
+                Asignar
+              </button>
+            </div>
+          </td>
         </tr>
-
-    }
-
-</table>
+      }
+    </tbody>
+  </table>
+  <div class="empty-msg" *ngIf="tecnicos.length === 0">No hay técnicos registrados.</div>
+</div>

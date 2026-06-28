@@ -1,21 +1,23 @@
-<h2>Panel Administrador</h2>
-
-<button (click)="cerrarSesion()">
-    Cerrar sesión
-</button>
-
-<hr>
-
-<nav>
-
-<a routerLink="/admin/dashboard">Dashboard</a> |
-<a routerLink="/admin/usuarios">Usuarios</a> |
-<a routerLink="/admin/tecnicos">Tecnicos</a> |
-<a routerLink="/admin/tickets">Tickets</a> |
-<a routerLink="/admin/reportes">Reportes</a>
-
-</nav>
-
-<hr>
-
-<router-outlet></router-outlet>
+<div class="layout-wrapper">
+  <header class="layout-header">
+    <h1>🖥️ Service Desk — Administrador</h1>
+    <nav>
+      <a routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/admin/usuarios" routerLinkActive="active">Usuarios</a>
+      <a routerLink="/admin/tecnicos" routerLinkActive="active">Técnicos</a>
+      <a routerLink="/admin/tickets" routerLinkActive="active">Tickets</a>
+      <a routerLink="/admin/reportes" routerLinkActive="active">Reportes</a>
+    </nav>
+    <div class="user-info">
+      <span class="user-avatar">{{ inicial }}</span>
+      <div class="user-text">
+        <span class="user-name">{{ usuarioActual }}</span>
+        <span class="user-role">Administrador</span>
+      </div>
+    </div>
+    <button class="btn-logout" (click)="cerrarSesion()">Cerrar sesión</button>
+  </header>
+  <main class="layout-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
