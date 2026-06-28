@@ -1,46 +1,115 @@
-	package cibertec.pe.config;
+package cibertec.pe.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import cibertec.pe.enums.Role;
-import cibertec.pe.model.UsuarioCredential;
+import cibertec.pe.dto.RegisterRequest;
 import cibertec.pe.repository.IUsuarioCredential;
+import cibertec.pe.service.AuthService;
 
 @Component
 public class InitializerConfig implements CommandLineRunner {
-	@Autowired
-  private  PasswordEncoder encoder;
-	@Autowired
-   private IUsuarioCredential credential;
-   
 
-@Override
-   public void run(String... args) throws Exception {
-     if(credential.count() == 0) {
-    	 UsuarioCredential admin = new UsuarioCredential();
-    	 admin.setName("admin");
-    	 admin.setEmail("admin@gmail.com");
-    	 admin.setPassword(encoder.encode("admin123"));
-    	 admin.setRol(Role.ADMINISTRADOR);
-    	 credential.save(admin);
-    	 
-    	 UsuarioCredential tecnico = new UsuarioCredential();
-    	 tecnico.setName("tecnico");
-    	 tecnico.setEmail("tecnico@gmail.com");
-    	 tecnico.setPassword(encoder.encode("tecnico123"));
-    	 tecnico.setRol(Role.TECNICO);
-    	 credential.save(tecnico);
-    
-    	 UsuarioCredential usuario = new UsuarioCredential();
-    	 usuario.setName("usuario");
-    	 usuario.setEmail("usuario@gmail.com");
-    	 usuario.setPassword(encoder.encode("usuario123"));
-    	 usuario.setRol(Role.USUARIO);
-    	 credential.save(usuario);
-     }
-   }
-   
+    @Autowired
+    private AuthService authService;
+
+    @Autowired
+    private IUsuarioCredential credentialRepository;
+
+    @Override
+    public void run(String... args) throws Exception {
+
+        crearSiNoExiste(
+            "admin@gmail.com",
+            "Admin",
+            "Sistema",
+            "admin123",
+            "ADMINISTRADOR"
+        );
+
+        crearSiNoExiste(
+            "soporte@gmail.com",
+            "Soporte",
+            "Tecnico",
+            "tecnico123",
+            "TECNICO"
+        );
+
+        crearSiNoExiste(
+            "software@gmail.com",
+            "Software",
+            "Tecnico",
+            "tecnico123",
+            "TECNICO"
+        );
+
+        crearSiNoExiste(
+            "hardware@gmail.com",
+            "Hardware",
+            "Tecnico",
+            "tecnico123",
+            "TECNICO"
+        );
+
+        crearSiNoExiste(
+            "bd@gmail.com",
+            "Base",
+            "Datos",
+            "tecnico123",
+            "TECNICO"
+        );
+
+        crearSiNoExiste(
+            "mantenimiento@gmail.com",
+            "Mantenimiento",
+            "Tecnico",
+            "tecnico123",
+            "TECNICO"
+        );
+
+        crearSiNoExiste(
+            "acceso@gmail.com",
+            "Acceso",
+            "Cuentas",
+            "tecnico123",
+            "TECNICO"
+        );
+
+        crearSiNoExiste(
+            "incidencia@gmail.com",
+            "Incidencia",
+            "Tecnico",
+            "tecnico123",
+            "TECNICO"
+        );
+
+        crearSiNoExiste(
+            "impresoras@gmail.com",
+            "Impresoras",
+            "Tecnico",
+            "tecnico123",
+            "TECNICO"
+        );
+    }
+
+    private void crearSiNoExiste(
+            String email,
+            String name,
+            String apellido,
+            String password,
+            String rol) {
+
+        if (!credentialRepository.existsByEmail(email)) {
+
+            RegisterRequest request = new RegisterRequest();
+            request.setName(name);
+            request.setApellido(apellido);
+            request.setEmail(email);
+            request.setPassword(password);
+            request.setRol(rol);
+
+            authService.register(request);
+        }
+    }
 }

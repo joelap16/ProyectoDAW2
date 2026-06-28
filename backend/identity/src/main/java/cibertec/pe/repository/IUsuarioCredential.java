@@ -15,4 +15,6 @@ public interface IUsuarioCredential extends JpaRepository<UsuarioCredential, Int
         Optional<UsuarioCredential> findByName(String name);
         
         List<UsuarioCredential> findByRol(Role rol);
+        
+        boolean existsByEmail(String email);
 }
