@@ -5,6 +5,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import cibertec.pe.dto.RegisterRequest;
 import cibertec.pe.dto.api.UsuarioApiRequest;
 import cibertec.pe.model.UsuarioCredential;
@@ -27,6 +29,9 @@ public class AuthService {
 
     @Autowired
     private WebClient webClient;
+    
+    @Value("${api.service.url}")
+    private String apiServiceUrl;
 
     public String register(RegisterRequest request) {
         try {
@@ -50,7 +55,7 @@ public class AuthService {
             dto.setRolId(mapRolToRolId(user.getRol()));
 
             webClient.post()
-            .uri("http://localhost:9002/api/internal/usuarios")
+            .uri(apiServiceUrl + "/api/internal/usuarios")
             .bodyValue(dto)
             .retrieve()
             .bodyToMono(String.class)
