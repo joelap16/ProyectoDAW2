@@ -12,11 +12,12 @@ public class TicketResponseDTO {
     private String tecnico;
     private String usuario;
     private LocalDateTime fechaCreacion;
+    private String comentarios;
 
     public TicketResponseDTO() {}
-
-    public TicketResponseDTO(Integer id, String titulo, String descripcion, String estado, String categoria,
-			String tecnico, String usuario, LocalDateTime fechaCreacion) {
+    
+    	public TicketResponseDTO(Integer id, String titulo, String descripcion, String estado, String categoria,
+			String tecnico, String usuario, LocalDateTime fechaCreacion, String comentarios) {
 		super();
 		this.id = id;
 		this.titulo = titulo;
@@ -26,6 +27,7 @@ public class TicketResponseDTO {
 		this.tecnico = tecnico;
 		this.usuario = usuario;
 		this.fechaCreacion = fechaCreacion;
+		this.comentarios = comentarios;
 	}
 
 	public Integer getId() {
@@ -91,4 +93,13 @@ public class TicketResponseDTO {
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
+
+	public String getComentarios() {
+		return comentarios;
+	}
+
+	public void setComentarios(String comentarios) {
+		this.comentarios = comentarios;
+	}
+    
 }

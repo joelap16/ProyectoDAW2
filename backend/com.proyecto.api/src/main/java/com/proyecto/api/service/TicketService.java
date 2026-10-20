@@ -303,7 +303,8 @@ public class TicketService {
         dto.setId(ticket.getIdTicket());
         dto.setTitulo(ticket.getTitulo());
         dto.setDescripcion(ticket.getDescripcion());
-        dto.setFechaCreacion(ticket.getFechaCreacion());
+        dto.setComentarios(ticket.getComentarios());
+        dto.setFechaCreacion(ticket.getFechaCreacion());        
 
         if (ticket.getEstado() != null) {
             dto.setEstado(ticket.getEstado().getNombreEstado().name());

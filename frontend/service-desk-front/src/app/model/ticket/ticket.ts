@@ -16,4 +16,6 @@ export interface Ticket {
 
   fechaCreacion: string;
 
+  comentarios?: string;
+
 }

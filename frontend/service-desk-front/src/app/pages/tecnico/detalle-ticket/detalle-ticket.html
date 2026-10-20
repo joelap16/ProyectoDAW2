@@ -44,6 +44,14 @@
         <td style="padding:10px 0; font-weight:600; color:#555">Usuario</td>
         <td style="padding:10px 0">{{ ticket.usuario }}</td>
       </tr>
+      <tr *ngIf="ticket.comentarios">
+        <td style="padding:10px 0; font-weight:600; color:#555">
+          Último comentario
+        </td>
+        <td style="padding:10px 0">
+          {{ ticket.comentarios }}
+        </td>
+      </tr>
     </table>
   </div>
 
